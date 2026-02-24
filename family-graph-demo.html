@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Family Knowledge Graph — Livo Demo</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1D3040;color:#F7F1E8}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:4px}
+#app{display:flex;height:100vh;width:100vw;flex-direction:column}
+.main-row{display:flex;flex:1;overflow:hidden}
+/* ── Glass Panel ── */
+.glass-panel{background:rgba(22,40,55,.55);backdrop-filter:blur(20px) saturate(1.3);-webkit-backdrop-filter:blur(20px) saturate(1.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.04),inset 0 0 0 1px rgba(255,255,255,.02)}
+/* ── Left Panel ── */
+.left-panel{width:240px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto}
+.panel-header{padding:14px 16px 10px;font-size:13px;font-weight:700;color:#F7F1E8;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px}
+.panel-header .badge{font-size:9px;padding:2px 6px;border-radius:99px;background:rgba(162,150,200,.15);color:#BEB5DA;font-weight:600}
+.setting-group{padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04)}
+.setting-label{font-size:10px;color:#7A9AAB;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;font-weight:600}
+.setting-select{width:100%;background:rgba(30,50,65,.6);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 10px;color:#F7F1E8;font-size:12px;outline:none}
+.setting-select:focus{border-color:rgba(162,150,200,.5)}
+.toggle-row{display:flex;align-items:center;gap:8px;padding:4px 0}
+.toggle-row input[type=checkbox]{accent-color:#BEB5DA}
+.toggle-row label{font-size:11px;color:#B5D8EA;cursor:pointer}
+.color-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+/* ── Center ── */
+.graph-area{flex:1;position:relative;overflow:hidden}
+.graph-area canvas{display:block}
+/* ── Right Panel ── */
+.right-panel{width:280px;flex-shrink:0;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow:hidden}
+.right-scroll{flex:1;overflow-y:auto;padding:0}
+/* ── Node Detail ── */
+.detail-section{overflow:hidden;transition:max-height .25s ease;border-bottom:1px solid rgba(255,255,255,.06)}
+.detail-section.collapsed{max-height:0!important;border-bottom:none}
+.detail-inner{padding:14px 16px}
+.detail-name{font-size:14px;font-weight:700;color:#FBF7F0;margin-bottom:4px}
+.detail-type{font-size:11px;text-transform:capitalize;margin-bottom:8px}
+.detail-prop{font-size:11px;color:#B5D8EA;padding:3px 0}
+.detail-prop span{color:#F7F1E8}
+.detail-close{float:right;background:none;border:none;color:#7A9AAB;cursor:pointer;font-size:16px;line-height:1}
+/* ── Insight Cards (Collapsible Sections + Compact Cards) ── */
+.insight-section{margin:0 8px 8px}
+.insight-section-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid transparent;cursor:pointer;transition:background .15s;width:100%;background:transparent;font-family:inherit;color:inherit}
+.insight-section-header:hover{filter:brightness(1.2)}
+.insight-section-header .ish-icon{font-size:14px}
+.insight-section-header .ish-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.insight-section-header .ish-count{font-size:10px;opacity:.6}
+.insight-section-header .ish-chevron{margin-left:auto;width:12px;height:12px;transition:transform .2s}
+.insight-section-header .ish-chevron.collapsed{transform:rotate(-90deg)}
+.insight-section-cards{padding:4px 0 0 6px}
+.insight-card{border-radius:8px;padding:8px 10px;margin:3px 0;border:1px solid transparent;display:flex;align-items:flex-start;gap:8px;transition:border-color .2s}
+.insight-card .ic-icon{width:20px;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.insight-card .ic-msg{font-size:11px;line-height:1.4;color:#d4d4d8;flex:1;min-width:0}
+.insight-card .ic-btn{padding:2px 8px;border-radius:6px;border:none;font-size:10px;font-weight:600;cursor:pointer;opacity:0;transition:opacity .15s;flex-shrink:0;background:transparent}
+.insight-card:hover .ic-btn{opacity:1}
+/* Category: safety */
+.ish-safety{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.06)}
+.ish-safety .ish-label,.ish-safety .ish-count{color:#f87171}
+.ic-safety{border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.04)}
+.ic-safety .ic-icon{background:rgba(239,68,68,.1)}
+.ic-safety .ic-btn{color:#f87171}.ic-safety .ic-btn:hover{background:rgba(239,68,68,.15)}
+/* Category: suggestion */
+.ish-suggestion{border-color:rgba(96,165,250,.15);background:rgba(96,165,250,.03)}
+.ish-suggestion .ish-label,.ish-suggestion .ish-count{color:rgba(96,165,250,.8)}
+.ic-suggestion{border-color:rgba(96,165,250,.15);background:rgba(96,165,250,.03)}
+.ic-suggestion .ic-icon{background:rgba(96,165,250,.1)}
+.ic-suggestion .ic-btn{color:#60a5fa}.ic-suggestion .ic-btn:hover{background:rgba(96,165,250,.15)}
+/* Category: celebration */
+.ish-celebration{border-color:rgba(250,204,21,.2);background:rgba(250,204,21,.04)}
+.ish-celebration .ish-label,.ish-celebration .ish-count{color:rgba(250,204,21,.8)}
+.ic-celebration{border-color:rgba(250,204,21,.15);background:rgba(250,204,21,.03)}
+.ic-celebration .ic-icon{background:rgba(250,204,21,.1)}
+.ic-celebration .ic-btn{color:#facc15}.ic-celebration .ic-btn:hover{background:rgba(250,204,21,.15)}
+/* Category: reminder */
+.ish-reminder{border-color:rgba(52,211,153,.15);background:rgba(52,211,153,.03)}
+.ish-reminder .ish-label,.ish-reminder .ish-count{color:rgba(52,211,153,.8)}
+.ic-reminder{border-color:rgba(52,211,153,.15);background:rgba(52,211,153,.03)}
+.ic-reminder .ic-icon{background:rgba(52,211,153,.1)}
+.ic-reminder .ic-btn{color:#34d399}.ic-reminder .ic-btn:hover{background:rgba(52,211,153,.15)}
+/* ── Sync Context Panel ── */
+.sync-panel{border-bottom:1px solid rgba(162,150,200,.2);background:rgba(162,150,200,.03);padding:0 0 12px}
+.sync-header{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid rgba(162,150,200,.1)}
+.sync-header .sh-cmd{font-size:12px;font-weight:600;color:#F7F1E8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sync-header .sh-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600}
+.sync-close{background:none;border:none;color:#7A9AAB;cursor:pointer;font-size:14px}
+.sync-label{padding:10px 14px 4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(175,165,210,.7)}
+.sync-item{display:flex;align-items:center;gap:8px;padding:5px 14px;font-size:11px}
+.sync-check{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+.sync-check.on{background:rgba(42,110,120,.2);color:#58AAB8}
+.sync-check.off{background:rgba(40,60,75,.4);color:#4A6E80}
+.sync-item .si-label{color:#F7F1E8}
+.sync-item .si-detail{color:#4A6E80;font-size:10px;margin-left:4px}
+.sync-exec{margin:8px 12px 0;width:calc(100% - 24px);padding:7px;border-radius:8px;border:1px solid rgba(162,150,200,.3);background:rgba(162,150,200,.15);color:#BEB5DA;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.sync-exec:hover{background:rgba(162,150,200,.25)}
+/* ── Command Bar ── */
+.command-bar{padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:6px;flex-wrap:wrap}
+.cmd-btn{flex:1;padding:7px 4px;border-radius:8px;border:1px solid rgba(162,150,200,.25);background:rgba(162,150,200,.08);color:#BEB5DA;font-size:10px;font-weight:600;cursor:pointer;text-align:center;transition:background .15s;min-width:70px}
+.cmd-btn:hover{background:rgba(162,150,200,.2)}
+.cmd-btn.active{background:rgba(162,150,200,.25);border-color:rgba(162,150,200,.5)}
+/* ── Status Bar ── */
+.status-bar{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:10px;color:#4A6E80;border-top:1px solid rgba(255,255,255,.06);background:rgba(22,40,55,.6);backdrop-filter:blur(16px)}
+.status-bar .dot{width:6px;height:6px;border-radius:50%;background:#58AAB8;display:inline-block;margin-right:6px}
+/* ── Tooltip ── */
+.tooltip{position:absolute;pointer-events:none;opacity:0;transition:opacity .15s;background:rgba(22,40,55,.7)!important;backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 14px;color:#F7F1E8;font-size:12px;max-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04);z-index:100}
+.tooltip.visible{opacity:1}
+.tooltip .tt-name{font-weight:700;color:#FBF7F0;margin-bottom:3px}
+.tooltip .tt-type{font-size:10px;text-transform:capitalize;margin-bottom:2px}
+.tooltip .tt-layer{font-size:9px;color:#4A6E80}
+.tooltip .tt-badge{font-size:10px;margin-top:3px}
+/* ── Livo Chat Panel ── */
+.livo-chat-panel{position:fixed;bottom:24px;right:24px;z-index:50;width:400px;max-height:min(640px,calc(100vh - 80px));background:rgba(22,40,55,.8);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);border:1px solid rgba(255,255,255,.08);border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:slideUp .4s cubic-bezier(.34,.7,.77,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.livo-panel-header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
+.livo-sphere{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.livo-sphere canvas{display:block}
+.livo-header-text{flex:1}
+.livo-title{font-size:13px;font-weight:700;color:#F7F1E8}
+.livo-subtitle{font-size:9px;color:#7A9AAB;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.livo-badge{font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(200,195,225,.15);color:#D0C8E8;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.livo-close{background:none;border:none;color:#7A9AAB;cursor:pointer;font-size:16px;padding:0;line-height:1}
+.livo-close:hover{color:#B5D8EA}
+.livo-content{flex:1;overflow-y:auto;padding:0}
+.livo-section{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04)}
+.livo-section-title{font-size:10px;font-weight:700;color:#B5D8EA;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.livo-script-card{background:rgba(30,50,65,.6);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:10px;margin-bottom:8px;transition:border-color .2s}
+.livo-script-card:hover{border-color:rgba(255,255,255,.12)}
+.livo-script-tone{display:inline-block;font-size:8px;padding:2px 6px;border-radius:4px;font-weight:600;text-transform:capitalize;margin-bottom:6px}
+.livo-script-tone.gentle{background:rgba(85,165,181,.15);color:#7BC0D0}
+.livo-script-tone.direct{background:rgba(226,88,96,.15);color:#E87878}
+.livo-script-tone.curious{background:rgba(175,165,210,.15);color:#D0C8E8}
+.livo-script-tone.respecthonor{background:rgba(217,119,6,.15);color:#d97706}
+.livo-script-tone.curiosityadmiration{background:rgba(234,179,8,.15);color:#eab308}
+.livo-script-tone.familypartnership{background:rgba(249,115,22,.15);color:#f97316}
+.livo-script-tone.scaffolding,.livo-tone-badge.scaffolding{background:rgba(132,204,22,.15);color:#84cc16;display:inline-block;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:600;margin-right:6px;margin-bottom:4px}
+.livo-script-msg{font-size:11px;line-height:1.5;color:#F7F1E8;margin-bottom:6px;font-style:italic}
+.livo-script-follow{font-size:10px;color:#7A9AAB;margin-bottom:8px}
+.livo-script-btn{width:100%;padding:6px;border-radius:6px;border:1px solid rgba(200,195,225,.3);background:rgba(200,195,225,.08);color:#D0C8E8;font-size:10px;font-weight:600;cursor:pointer;transition:background .15s}
+.livo-script-btn:hover{background:rgba(200,195,225,.15)}
+.livo-practice-btn{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(175,165,210,.3);background:rgba(175,165,210,.12);color:#BEB5DA;font-size:11px;font-weight:600;cursor:pointer;transition:background .15s}
+.livo-practice-btn:hover{background:rgba(175,165,210,.25)}
+.livo-practice-btn.active{background:rgba(175,165,210,.25);border-color:rgba(175,165,210,.5)}
+.livo-chat-area{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;min-height:200px}
+.livo-msg{display:flex;gap:8px;margin-bottom:6px}
+.livo-msg.user{justify-content:flex-end}
+.livo-msg.child{border-left:3px solid rgba(175,165,210,.5)}
+.livo-msg.feedback{border-left:3px solid rgba(162,150,200,.5)}
+.livo-bubble{padding:10px 12px;border-radius:10px;max-width:85%;font-size:11px;line-height:1.4}
+.livo-msg.user .livo-bubble{background:rgba(162,150,200,.2);color:#BEB5DA;border-radius:10px 2px 10px 10px}
+.livo-msg.livo .livo-bubble{background:rgba(40,60,75,.8);color:#F7F1E8;border-radius:2px 10px 10px 10px}
+.livo-msg.child .livo-bubble{background:rgba(175,165,210,.12);color:#F7F1E8;border-radius:2px 10px 10px 10px;margin-left:20px}
+.livo-msg.feedback .livo-bubble{background:rgba(85,165,181,.1);color:#F7F1E8;border-radius:2px 10px 10px 10px;margin-left:20px}
+.livo-feedback-rating{display:inline-block;font-size:8px;padding:2px 6px;border-radius:3px;font-weight:600;margin-right:6px}
+.livo-feedback-rating.great{background:rgba(42,110,120,.2);color:#58AAB8}
+.livo-feedback-rating.good{background:rgba(235,184,48,.2);color:#EBB830}
+.livo-feedback-rating.needs-work{background:rgba(226,88,96,.2);color:#E87878}
+.livo-input-area{padding:12px 16px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px}
+.livo-input-icon{flex-shrink:0;width:32px;height:32px;border-radius:8px;background:rgba(162,150,200,.15);border:1px solid rgba(162,150,200,.2);display:flex;align-items:center;justify-content:center;color:#BEB5DA;cursor:pointer;font-size:14px;transition:background .15s}
+.livo-input-icon:hover{background:rgba(162,150,200,.25)}
+.livo-input-field{flex:1;background:rgba(30,50,65,.8);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:8px 12px;color:#F7F1E8;font-size:11px;outline:none}
+.livo-input-field:focus{border-color:rgba(162,150,200,.4)}
+.livo-input-field::placeholder{color:#4A6E80}
+/* ── Livo FAB (floating action button) ── */
+.livo-fab{position:fixed;bottom:40px;right:300px;z-index:60;display:flex;align-items:center;gap:10px;padding:10px 18px 10px 12px;border-radius:40px;border:1px solid rgba(175,165,210,.35);background:rgba(22,40,55,.85);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(175,165,210,.15);cursor:pointer;transition:all .25s;animation:fabPulse 3s ease-in-out infinite}
+.livo-fab:hover{border-color:rgba(175,165,210,.6);box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 30px rgba(175,165,210,.25);transform:translateY(-2px)}
+.livo-fab .fab-sphere{width:36px;height:36px;flex-shrink:0;overflow:hidden}
+.livo-fab .fab-sphere canvas{display:block;width:36px;height:36px}
+.livo-fab .fab-text{display:flex;flex-direction:column;gap:1px}
+.livo-fab .fab-title{font-size:12px;font-weight:700;color:#F7F1E8}
+.livo-fab .fab-hint{font-size:9px;color:#BEB5DA;font-weight:500}
+.livo-fab .fab-dot{width:8px;height:8px;border-radius:50%;background:#E25860;animation:dotPulse 1.5s ease-in-out infinite;flex-shrink:0}
+@keyframes fabPulse{0%,100%{box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(175,165,210,.15)}50%{box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 30px rgba(175,165,210,.3)}}
+@keyframes dotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="main-row">
+    <!-- LEFT PANEL -->
+    <aside class="glass-panel left-panel">
+      <div class="panel-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BEB5DA" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7 7 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a7 7 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a7 7 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a7 7 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Graph Settings
+      </div>
+      <div class="setting-group">
+        <div class="setting-label">Viewing As</div>
+        <select id="viewerSelect" class="setting-select">
+          <option value="m-grandpa">Grandpa (Grandparent)</option>
+          <option value="m-grandma">Grandma (Grandparent)</option>
+          <option value="m-dad" selected>Dad (Parent)</option>
+          <option value="m-mom">Mom (Parent)</option>
+          <option value="m-daughter">Daughter (Child)</option>
+          <option value="m-son">Son (Child)</option>
+          <option value="m-caregiver">Foreign Caregiver</option>
+        </select>
+      </div>
+      <div class="setting-group">
+        <div class="setting-label">Node Types</div>
+        <div class="toggle-row"><input type="checkbox" id="t-member" checked><span class="color-dot" style="background:#58AAB8"></span><label for="t-member">Members</label></div>
+        <div class="toggle-row"><input type="checkbox" id="t-preference" checked><span class="color-dot" style="background:#EBB830"></span><label for="t-preference">Preferences</label></div>
+        <div class="toggle-row"><input type="checkbox" id="t-device" checked><span class="color-dot" style="background:#BEB5DA"></span><label for="t-device">Devices</label></div>
+        <div class="toggle-row"><input type="checkbox" id="t-document" checked><span class="color-dot" style="background:#F0B0B8"></span><label for="t-document">Documents</label></div>
+        <div class="toggle-row"><input type="checkbox" id="t-health" checked><span class="color-dot" style="background:#ef4444"></span><label for="t-health">Health</label></div>
+        <div class="toggle-row"><input type="checkbox" id="t-house_rule" checked><span class="color-dot" style="background:#E87840"></span><label for="t-house_rule">House Rules</label></div>
+      </div>
+      <div class="setting-group" style="margin-top:auto;border-top:1px solid rgba(255,255,255,.06);border-bottom:none;padding-top:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <svg width="28" height="28" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="rFront"><rect x="0" y="20" width="40" height="20"/></clipPath>
+            </defs>
+            <!-- Right ring (behind at top) -->
+            <ellipse cx="23" cy="20" rx="9" ry="13" stroke="#C44B4B" stroke-width="2.6" fill="none" transform="rotate(20,23,20)"/>
+            <!-- Left ring (full, on top at top crossing) -->
+            <ellipse cx="17" cy="20" rx="9" ry="13" stroke="#C44B4B" stroke-width="2.6" fill="none" transform="rotate(-20,17,20)"/>
+            <!-- Right ring front (in front at bottom crossing) -->
+            <ellipse cx="23" cy="20" rx="9" ry="13" stroke="#C44B4B" stroke-width="2.6" fill="none" transform="rotate(20,23,20)" clip-path="url(#rFront)"/>
+          </svg>
+          <span style="color:#fff;font-size:14px;font-weight:700;letter-spacing:.4px;font-family:Arial,Helvetica,sans-serif">TrendLife<sup style="font-size:7px;vertical-align:super;opacity:.7">™</sup></span>
+        </div>
+        <div style="font-size:11px;color:#4A6E80;line-height:1.6">
+          <strong style="color:#B5D8EA">Family Knowledge Graph</strong><br>
+          Livo Demo &middot; d3-force
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTER: CANVAS -->
+    <main class="graph-area" id="graphArea">
+      <canvas id="canvas"></canvas>
+      <div class="tooltip" id="tooltip"></div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="glass-panel right-panel">
+      <div class="panel-header">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BEB5DA" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+        Family Insights
+        <span class="badge" style="margin-left:auto;background:rgba(200,195,225,.15);color:#D0C8E8">Livo</span>
+      </div>
+      <!-- Tab navigation -->
+      <div style="display:flex;border-bottom:1px solid rgba(255,255,255,.06)">
+        <button id="tabInsights" onclick="switchTab('insights')" style="flex:1;padding:6px;font-size:10px;font-weight:600;border:none;background:transparent;cursor:pointer;color:#818cf8;border-bottom:2px solid #6366f1">Insights</button>
+        <button id="tabReceipt" onclick="switchTab('receipt')" style="flex:1;padding:6px;font-size:10px;font-weight:600;border:none;background:transparent;cursor:pointer;color:#52525b;border-bottom:2px solid transparent">Trust Receipt</button>
+      </div>
+      <div class="detail-section collapsed" id="detailSection">
+        <div class="detail-inner" id="detailContent"></div>
+      </div>
+      <div class="right-scroll" id="rightScroll">
+        <div id="syncPanel"></div>
+        <div id="insightsContainer" style="padding:4px 0"></div>
+      </div>
+      <!-- Trust Receipt Panel (hidden by default) -->
+      <div id="trustReceiptPanel" style="display:none;overflow-y:auto;flex:1;padding:12px"></div>
+      <div class="command-bar">
+        <button class="cmd-btn" data-cmd="food" title="Trigger Sync Glow for dietary preferences">Order Dinner</button>
+        <button class="cmd-btn" data-cmd="clean" title="Trigger Sync Glow for devices">Clean Room</button>
+        <button class="cmd-btn" data-cmd="hike" title="Trigger Sync Glow for activities">Plan Hike</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="glass-panel status-bar">
+    <span><span class="dot"></span>Graph Active &middot; <span id="nodeCount">0</span> nodes &middot; <span id="edgeCount">0</span> edges</span>
+    <span id="statusRight">Viewer: Dad</span>
+  </div>
+</div>
+
+<!-- LIVO FAB -->
+<div class="livo-fab" id="livoFab" onclick="openCoachMode()">
+  <div class="fab-sphere"><canvas id="livoFabSphere" width="72" height="72"></canvas></div>
+  <div class="fab-text">
+    <span class="fab-title">Talk to Livo</span>
+    <span class="fab-hint">AI Coach Ready</span>
+  </div>
+  <span class="fab-dot"></span>
+</div>
+
+<!-- LIVO CHAT PANEL -->
+<div class="livo-chat-panel" id="livoChatPanel" style="display:none">
+  <div class="livo-panel-header">
+    <div class="livo-sphere">
+      <canvas id="livoSphere" width="56" height="56"></canvas>
+    </div>
+    <div class="livo-header-text">
+      <div class="livo-title">Livo</div>
+      <div class="livo-subtitle">Trendlife Curator</div>
+    </div>
+    <span class="livo-badge">AI Coach</span>
+    <button class="livo-close" onclick="closeLivoPanel()">&times;</button>
+  </div>
+  <div class="livo-content">
+    <div class="livo-section" id="livoCoachingSection">
+      <div class="livo-section-title">Coaching Scripts</div>
+      <div id="livoScriptCards"></div>
+      <button class="livo-practice-btn" id="livoPracticeBtn" onclick="togglePracticeMode()">Practice with Livo</button>
+    </div>
+    <div class="livo-section" id="livoChatSection" style="flex:1;display:none;flex-direction:column">
+      <div class="livo-chat-area" id="livoChatArea"></div>
+      <div class="livo-input-area">
+        <div class="livo-input-icon" onclick="sendLivoMessage()">💬</div>
+        <input type="text" class="livo-input-field" id="livoInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendLivoMessage()">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════════════════
+const ALL_NODES = [
+  {id:"m-grandpa",type:"member",label:"Grandpa",role:"grandparent",gender:"male",age:72,riskLevel:"low",visibility:"family"},
+  {id:"m-grandma",type:"member",label:"Grandma",role:"grandparent",gender:"female",age:68,riskLevel:"low",visibility:"family",healthTags:["Diabetes","Low-Salt Diet"]},
+  {id:"m-dad",type:"member",label:"Dad",role:"parent",gender:"male",age:42,riskLevel:"low",visibility:"family"},
+  {id:"m-mom",type:"member",label:"Mom",role:"parent",gender:"female",age:40,riskLevel:"low",visibility:"family",healthTags:["Lactose Intolerant"]},
+  {id:"m-daughter",type:"member",label:"Daughter",role:"child",gender:"female",age:12,riskLevel:"low",visibility:"family"},
+  {id:"m-son",type:"member",label:"Son",role:"child",gender:"male",age:8,riskLevel:"low",visibility:"family"},
+  {id:"p-no-meat",type:"preference",label:"No Meat",category:"food",sentiment:"avoids",riskLevel:"low",visibility:"family"},
+  {id:"p-loves-soup",type:"preference",label:"Soup",category:"food",sentiment:"loves",riskLevel:"low",visibility:"family"},
+  {id:"p-loves-hiking",type:"preference",label:"Hiking",category:"activity",sentiment:"likes",riskLevel:"low",visibility:"family"},
+  {id:"p-loves-baking",type:"preference",label:"Baking",category:"activity",sentiment:"loves",riskLevel:"low",visibility:"family"},
+  {id:"d-ipad",type:"device",label:"iPad",platform:"Apple",os:"iPadOS",riskLevel:"low",visibility:"family"},
+  {id:"d-laptop",type:"device",label:"Laptop",platform:"Apple",os:"macOS",riskLevel:"low",visibility:"family"},
+  {id:"d-suspicious-app",type:"device",label:"Suspicious App",platform:"Unknown",os:"Android",riskLevel:"high",visibility:"private"},
+  {id:"doc-grocery",type:"document",label:"Weekly Grocery List",docType:"list",riskLevel:"low",visibility:"family"},
+  {id:"doc-soup-recipe",type:"document",label:"Grandma's Soup Recipe",docType:"recipe",riskLevel:"low",visibility:"family"},
+  {id:"doc-vibe-coding",type:"document",label:"Vibe Coding Project",docType:"project",isAchievement:true,riskLevel:"low",visibility:"family"},
+  {id:"doc-private-chat",type:"document",label:"Private Chat",docType:"note",riskLevel:"low",visibility:"private"},
+  {id:"r-tech-free",type:"house_rule",label:"Tech-Free After 10PM",trigger:"time",condition:"after 10:00 PM",action:"disable device access",riskLevel:"low",visibility:"family"},
+  {id:"p-morning-walk",type:"preference",label:"Morning Walk",category:"activity",sentiment:"loves",riskLevel:"low",visibility:"family"},
+  {id:"p-chinese-chess",type:"preference",label:"Chinese Chess",category:"activity",sentiment:"loves",riskLevel:"low",visibility:"family"},
+  {id:"m-caregiver",type:"member",label:"Foreign Caregiver",role:"caregiver",gender:"female",age:35,riskLevel:"low",visibility:"family",adminLevel:"secondary"},
+  {id:"h-diabetes",type:"health",label:"Diabetes",condition:"Type 2 Diabetes",severity:"moderate",riskLevel:"medium",visibility:"health_only"},
+  {id:"h-low-salt",type:"health",label:"Low-Salt Diet",condition:"Dietary restriction due to hypertension risk",severity:"low",riskLevel:"low",visibility:"health_only"},
+  {id:"h-lactose",type:"health",label:"Lactose Intolerant",condition:"Cannot digest dairy products",severity:"moderate",riskLevel:"low",visibility:"health_only"},
+  {id:"doc-family-budget",type:"document",label:"Family Budget",docType:"financial",riskLevel:"low",visibility:"guarded"},
+  {id:"doc-gold-fund",type:"document",label:"15% Gold Fund",docType:"financial",riskLevel:"high",visibility:"guarded"},
+];
+const ALL_EDGES = [
+  {id:"e1",source:"m-dad",target:"m-mom",relation:"spouse_of",weight:5},
+  {id:"e2",source:"m-dad",target:"m-daughter",relation:"parent_of",weight:4},
+  {id:"e3",source:"m-dad",target:"m-son",relation:"parent_of",weight:3},
+  {id:"e4",source:"m-mom",target:"m-daughter",relation:"parent_of",weight:5},
+  {id:"e5",source:"m-mom",target:"m-son",relation:"parent_of",weight:4},
+  {id:"e6",source:"m-daughter",target:"m-son",relation:"sibling_of",weight:3},
+  {id:"e7",source:"m-daughter",target:"p-no-meat",relation:"has_preference",label:"Daughter avoids meat"},
+  {id:"e8",source:"m-son",target:"p-loves-soup",relation:"has_preference",label:"Son loves soup"},
+  {id:"e9",source:"m-dad",target:"p-loves-hiking",relation:"has_preference",label:"Dad likes hiking"},
+  {id:"e10",source:"m-mom",target:"p-loves-baking",relation:"has_preference",label:"Mom loves baking"},
+  {id:"e11",source:"m-daughter",target:"d-ipad",relation:"owns_device"},
+  {id:"e12",source:"m-dad",target:"d-laptop",relation:"owns_device"},
+  {id:"e13",source:"m-mom",target:"doc-grocery",relation:"authored"},
+  {id:"e14",source:"doc-soup-recipe",target:"p-loves-soup",relation:"related_to",label:"Recipe for Son's favorite"},
+  {id:"e15",source:"d-suspicious-app",target:"d-ipad",relation:"installed_on",label:"Installed on Daughter's iPad"},
+  {id:"e16",source:"m-daughter",target:"d-suspicious-app",relation:"owns_device",label:"Daughter installed this app"},
+  {id:"e17",source:"m-daughter",target:"doc-vibe-coding",relation:"created_by",label:"Daughter's coding project"},
+  {id:"e18",source:"m-daughter",target:"doc-private-chat",relation:"authored",label:"Daughter's private chat"},
+  {id:"e19",source:"r-tech-free",target:"d-ipad",relation:"applies_to",label:"Rule applies to iPad"},
+  {id:"e20",source:"m-grandpa",target:"m-grandma",relation:"spouse_of",weight:5},
+  {id:"e21",source:"m-grandpa",target:"m-dad",relation:"parent_of",weight:4},
+  {id:"e22",source:"m-grandma",target:"m-dad",relation:"parent_of",weight:4},
+  {id:"e23",source:"m-grandpa",target:"m-daughter",relation:"grandparent_of",weight:3},
+  {id:"e24",source:"m-grandpa",target:"m-son",relation:"grandparent_of",weight:3},
+  {id:"e25",source:"m-grandma",target:"m-daughter",relation:"grandparent_of",weight:3},
+  {id:"e26",source:"m-grandma",target:"m-son",relation:"grandparent_of",weight:3},
+  {id:"e27",source:"m-grandma",target:"doc-soup-recipe",relation:"authored",label:"Grandma's original recipe"},
+  {id:"e28",source:"m-grandpa",target:"p-morning-walk",relation:"has_preference",label:"Grandpa loves morning walks"},
+  {id:"e29",source:"m-grandpa",target:"p-chinese-chess",relation:"has_preference",label:"Grandpa loves Chinese chess"},
+  {id:"e30",source:"m-grandma",target:"p-loves-baking",relation:"has_preference",label:"Grandma also loves baking"},
+  {id:"e31",source:"m-grandma",target:"h-diabetes",relation:"has_health_condition",label:"Grandma has diabetes"},
+  {id:"e32",source:"m-grandma",target:"h-low-salt",relation:"has_health_condition",label:"Grandma needs low-salt diet"},
+  {id:"e33",source:"m-caregiver",target:"m-grandma",relation:"caregiver_of",label:"Caregiver for Grandma",weight:4},
+  {id:"e34",source:"m-dad",target:"doc-family-budget",relation:"authored",label:"Dad manages family budget"},
+  {id:"e35",source:"m-grandma",target:"doc-gold-fund",relation:"authored",label:"Grandma researching gold fund"},
+  {id:"e36",source:"m-mom",target:"h-lactose",relation:"has_health_condition",label:"Mom is lactose intolerant"},
+];
+
+const PRACTICE_REPLIES = [
+  { childReply: "Ugh, it's just an app my friend told me about. It's not a big deal.", feedback: "Good opening — you showed concern without accusation. Try asking what the app does specifically.", rating: "good" },
+  { childReply: "Why are you always checking my stuff? Don't you trust me?", feedback: "The message came across as slightly monitoring. Try leading with your feelings: 'I worry because I care about you.'", rating: "needs-work" },
+  { childReply: "Oh, that? Yeah, I can show you. It's for chatting with my school friends.", feedback: "Great approach! Your curiosity and warmth made her feel safe to open up. Keep this tone.", rating: "great" },
+  { childReply: "I don't want to talk about it right now...", feedback: "She's shutting down — your tone might have felt like an interrogation. Try validating her feelings first.", rating: "needs-work" },
+  { childReply: "Fine, I'll delete it if it makes you happy.", feedback: "She's being compliant but not engaged. Try asking what she likes about the app to show genuine interest.", rating: "good" },
+];
+
+const COACHING_SCRIPTS = [
+  { tone: "gentle", message: "I noticed something on your iPad that I want to understand better. I'm not upset — I just want to make sure you're safe and that we can talk about it.", follow: "Opens dialogue gently" },
+  { tone: "direct", message: "Hey, I saw an unfamiliar app on your iPad. Can you tell me about it? I trust you, and I'd like to know what it does.", follow: "Clear and straightforward" },
+  { tone: "curious", message: "I've been thinking about the apps on your devices. There's one I don't recognize — could you show me what it's for? I'm genuinely curious.", follow: "Leads with curiosity, not suspicion" },
+];
+
+// ── handle_high_risk_event: detect app installs from children, return Trendlife scripts for Dad ──
+const HIGH_RISK_PATTERNS = [/suspicious.*app/i,/app.*install/i,/app.*detect/i,/unknown.*app/i,/new.*app/i,/malware/i,/unauthorized/i];
+const SYNAPSE_EVENTS = [
+  {id:"se-2",description:"Suspicious app detected on Daughter's iPad",impact:"Negative",intensity:5,involvedMembers:["m-daughter","m-dad"],timestamp:"2026-02-20T21:30:00Z"},
+  {id:"se-8",description:"Grandma researching a 15% gold fund with unverified credentials",impact:"Negative",intensity:4,involvedMembers:["m-grandma","m-dad"],timestamp:"2026-02-24T11:00:00Z"},
+];
+
+function handle_high_risk_event(events,nodes,edges){
+  for(const ev of events){
+    if(ev.impact!=="Negative"||ev.intensity<3)continue;
+    const isAppRisk=HIGH_RISK_PATTERNS.some(p=>p.test(ev.description));
+    if(!isAppRisk)continue;
+    const child=ev.involvedMembers.map(id=>nodes.find(n=>n.id===id)).find(n=>n&&n.type==="member"&&n.role==="child");
+    if(!child)continue;
+    const parent=ev.involvedMembers.map(id=>nodes.find(n=>n.id===id)).find(n=>n&&n.type==="member"&&n.role==="parent")||nodes.find(n=>n.type==="member"&&n.role==="parent");
+    if(!parent)continue;
+    const targetId=edges.filter(e=>(e.source===child.id||e.target===child.id)&&(e.relation==="owns_device"||e.relation==="installed_on")).map(e=>e.source===child.id?e.target:e.source).find(id=>{const n=nodes.find(n=>n.id===id);return n&&n.riskLevel==="high"})||"";
+    const age=child.age?` (${child.age} years old)`:"";
+    return{eventId:ev.id,event:ev,targetNodeId:targetId,childId:child.id,childLabel:child.label,parentId:parent.id,parentLabel:parent.label,scripts:[
+      {tone:"Safety-First",message:`Hey ${child.label}, I noticed something new on your device and I want to make sure we're both comfortable with it. I'm not angry — I care about your safety online. Can we look at it together?`,followUp:`What made you interested in this app? I'd love to understand.`,livoNote:`Trendlife Curator tip: Lead with curiosity, not accusation. ${child.label}${age} is more likely to open up when they feel safe.`},
+      {tone:"Trust-Building",message:`${child.label}, I trust you and I want you to feel comfortable coming to me about things online. I saw something that flagged as unusual — can we have a quick chat about it? No lectures, I promise.`,followUp:`Is there anything else on your devices you'd like to tell me about?`,livoNote:`Trendlife Curator tip: Frame this as a partnership. Ask before you restrict.`},
+      {tone:"Emotionally Aware",message:`I know growing up means exploring new things, and that's okay. I noticed an app that I'm not familiar with, and I'd feel better if we could talk about it. Your feelings and privacy matter to me.`,followUp:`How would you feel about us setting up some guidelines together for new app installs?`,livoNote:`Trendlife Curator tip: Acknowledge ${child.label}'s autonomy. Emotional Harmony first.`},
+    ]};
+  }
+  return null;
+}
+
+// ── livo_mediator: detect elder financial risks, return Respect & Honor scripts ──
+const FINANCIAL_RISK_PATTERNS = [/gold.*fund/i,/high.*return/i,/15%.*return/i,/investment.*scam/i,/investment.*risk/i,/ponzi/i,/guaranteed.*return/i,/suspicious.*invest/i,/financial.*risk/i,/risky.*invest/i,/unregistered.*fund/i,/too.*good.*true/i];
+
+function livo_mediator(events,nodes,edges){
+  for(const ev of events){
+    if(ev.impact!=="Negative"||ev.intensity<3)continue;
+    const isFinRisk=FINANCIAL_RISK_PATTERNS.some(p=>p.test(ev.description));
+    if(!isFinRisk)continue;
+    const elder=ev.involvedMembers.map(id=>nodes.find(n=>n.id===id)).find(n=>n&&n.type==="member"&&n.role==="grandparent");
+    if(!elder)continue;
+    const parent=ev.involvedMembers.map(id=>nodes.find(n=>n.id===id)).find(n=>n&&n.type==="member"&&n.role==="parent")||nodes.find(n=>n.type==="member"&&n.role==="parent");
+    if(!parent)continue;
+    const targetId=edges.filter(e=>(e.source===elder.id||e.target===elder.id)&&(e.relation==="authored"||e.relation==="related_to")).map(e=>e.source===elder.id?e.target:e.source).find(id=>{const n=nodes.find(n=>n.id===id);return n&&n.riskLevel==="high"})||"";
+    return{eventId:ev.id,event:ev,targetNodeId:targetId,elderId:elder.id,elderLabel:elder.label,parentId:parent.id,parentLabel:parent.label,scripts:[
+      {tone:"Respect & Honor",message:`Hey Mom, you're an expert in gold. Can you teach me how to check this firm's credentials? I'd love to learn from your experience before we commit any money.`,followUp:`What was it about this fund that caught your eye? I bet you noticed something I'd miss.`,livoNote:`Trendlife Curator tip: ${elder.label} has decades of life experience. Position yourself as the learner, not the authority. Never say "you got scammed" — say "teach me how to evaluate this."`},
+      {tone:"Curiosity & Admiration",message:`Mom, I heard you're looking into a gold investment — that sounds really interesting! I don't know much about this area. Could we sit down together and go through the details? I trust your judgment and I'd love to understand it better.`,followUp:`Have you talked to anyone else about it? Maybe we could also ask someone who works in banking.`,livoNote:`Trendlife Curator tip: Frame the conversation as a family learning opportunity, not an intervention. ${elder.label} is more receptive when she feels admired, not doubted.`},
+      {tone:"Family Partnership",message:`Mom, I was thinking — our family finances affect all of us, and I'd love your guidance on how to evaluate investments. You've always been smart with money. Can we review this gold fund together as a family project?`,followUp:`What if we made a checklist together? Things like — is the firm registered, what are the fees, can we verify the returns?`,livoNote:`Trendlife Curator tip: Turn this into a shared activity, not a solo decision. ${elder.label} keeps her dignity and agency while ${parent.label} gains visibility into the details.`},
+    ]};
+  }
+  return null;
+}
+
+// ── ScholarFilter: Scaffolding mode for child homework ──
+const HOMEWORK_PATTERNS=[/homework/i,/\bmath\b/i,/\bscience\b/i,/\bhistory\b/i,/\benglish\b/i,/what is .{3,}/i,/how do (i|you|we) (solve|calculate|find|answer)/i,/help me (with|do|solve|finish|answer)/i,/can you (help|explain|tell me|answer|solve)/i,/what('s| is) the answer/i,/solve (this|the)/i,/explain (this|how|why|what)/i,/\btest\b.*\btomorrow\b/i,/\bexam\b/i,/\bquiz\b/i,/\bessay\b/i,/\bstudy\b/i,/\b\d+\s*[\+\-\*\/]\s*\d+/i];
+function scholar_filter(message,viewerNode){
+  if(!viewerNode||viewerNode.type!=="member"||viewerNode.role!=="child")return{active:false};
+  const isHomework=HOMEWORK_PATTERNS.some(p=>p.test(message));
+  if(!isHomework)return{active:false};
+  const name=viewerNode.label,age=viewerNode.age||10;
+  let resp;
+  if(/\bmath\b|\d+\s*[\+\-\*\/]\s*\d+|calculate/i.test(message)){
+    resp=`Great question, ${name}! Before I help, let me ask you: What do you already know about this type of problem? Can you break it into smaller steps? Try the first step, and I'll guide you from there.`;
+  }else if(/\bscience\b|experiment|molecule|physics|chemistry|biology/i.test(message)){
+    resp=`Interesting topic, ${name}! What have you observed or read about this so far? If you had to make a guess, what do you think the answer might be? Let's reason through it together.`;
+  }else if(/\bessay\b|\breport\b|\bwriting\b|\bwrite\b/i.test(message)){
+    resp=`Let's work on this together, ${name}! First \u2014 what's the main idea you want to communicate? Can you tell me in one sentence what your essay should be about?`;
+  }else{
+    resp=`I can see you're working hard, ${name}! Instead of giving you the answer directly, let me help you think through it. What part of this question do you understand? What part is confusing?`;
+  }
+  return{active:true,scaffoldResponse:resp,childName:name,childAge:age};
+}
+
+// ── ValueFilter: Aggregate dietary restrictions with CP\u5024 ──
+function value_filter(nodes,edges){
+  const restrictions=[];
+  // Preference-based
+  edges.filter(e=>e.relation==="has_preference").forEach(edge=>{
+    const mid=edge.source.startsWith("m-")?edge.source:edge.target;
+    const pid=edge.source.startsWith("m-")?edge.target:edge.source;
+    const member=nodes.find(n=>n.id===mid);
+    const pref=nodes.find(n=>n.id===pid);
+    if(member&&pref&&pref.category==="food"){
+      restrictions.push({memberId:member.id,memberLabel:member.label,source:"preference",label:pref.label,sentiment:pref.sentiment});
+    }
+  });
+  // Health-based
+  edges.filter(e=>e.relation==="has_health_condition").forEach(edge=>{
+    const mid=edge.source.startsWith("m-")?edge.source:edge.target;
+    const hid=edge.source.startsWith("m-")?edge.target:edge.source;
+    const member=nodes.find(n=>n.id===mid);
+    const health=nodes.find(n=>n.id===hid);
+    if(member&&health&&/diet|salt|sugar|gluten|lactose|allerg|intoleran/i.test(health.label+health.condition)){
+      restrictions.push({memberId:member.id,memberLabel:member.label,source:"health",label:health.label,severity:health.severity});
+    }
+  });
+  // healthTags
+  nodes.filter(n=>n.type==="member"&&n.healthTags).forEach(member=>{
+    member.healthTags.forEach(tag=>{
+      if(!restrictions.some(r=>r.memberId===member.id&&r.label===tag)){
+        restrictions.push({memberId:member.id,memberLabel:member.label,source:"health",label:tag});
+      }
+    });
+  });
+  // Build instruction
+  const byMember=new Map();
+  restrictions.forEach(r=>{
+    const arr=byMember.get(r.memberLabel)||[];
+    arr.push(r);
+    byMember.set(r.memberLabel,arr);
+  });
+  let instruction="";
+  if(restrictions.length===0){instruction="No dietary restrictions detected.";}
+  else{
+    const lines=[];
+    byMember.forEach((rs,name)=>{
+      const parts=rs.map(r=>r.source==="health"?`${r.label} (health)`:`${r.sentiment||"note"}: ${r.label}`);
+      lines.push(`${name}: ${parts.join(", ")}`);
+    });
+    instruction="Dietary constraints:\n"+lines.join("\n");
+  }
+  const mustAvoid=restrictions.filter(r=>r.source==="health"||r.sentiment==="avoids").map(r=>r.label);
+  const cpNote=mustAvoid.length===0?"No hard restrictions \u2014 maximize CP\u5024 freely!":
+    `CP\u5024 Tip: Look for set meals that satisfy all ${mustAvoid.length} restriction(s): ${mustAvoid.join(", ")}. Shared dishes reduce per-person cost.`;
+  return{restrictions,instruction,cpNote};
+}
+
+// Run detection on load
+const _highRiskAlert = handle_high_risk_event(SYNAPSE_EVENTS, ALL_NODES, ALL_EDGES);
+const _mediatorAlert = livo_mediator(SYNAPSE_EVENTS, ALL_NODES, ALL_EDGES);
+
+// ═══════════════════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const NODE_COLORS = {member:"#58AAB8",preference:"#EBB830",device:"#BEB5DA",document:"#F0B0B8",health:"#ef4444",house_rule:"#E87840"};
+const NODE_RADIUS = {member:14,preference:6,device:5,document:5,health:5,house_rule:6};
+const DEPTH_SCALE = [0.75,1.0,1.2];
+const LAYER_NAMES = ["Base Layer","Core Layer","Memory Layer"];
+const RISK_HIGH = "#E25860", RISK_MED = "#C44B4B", ACH_COLOR = "#EBB830", GLOW = "#58AAB8";
+
+function depthOf(n) {
+  if (n.isAchievement) return 2;
+  if (n.visibility==="private"||n.visibility==="guarded") return 2;
+  if (n.type==="document"&&(n.visibility==="family"||!n.visibility)) return 0;
+  return 1;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+const S = {
+  viewerId:"m-dad",
+  selectedId:null,
+  highlightedIds:null,
+  highlightedEdges:null,
+  syncedIds:null,
+  activeCmd:null,
+  visibleTypes:{member:true,preference:true,device:true,document:true,health:true,house_rule:true},
+  tick:0,
+  bloom:0,
+  nodes:[],edges:[],
+  sim:null,
+  W:800,H:600,
+  transform:{x:0,y:0,k:1},
+  drag:null,hover:null,
+  livoMode:"coaching",
+  livoPracticeIndex:0,
+  livoChatHistory:[],
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  LIVO SPHERE ANIMATION
+// ═══════════════════════════════════════════════════════════════
+function animateLivoSphere() {
+  const canvas = document.getElementById("livoSphere");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = 2;
+
+  function frame(t) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, 28, 28);
+
+    const time = t / 1000;
+    const breath = Math.sin(time * 1.5) * 0.4 + 2.5;
+    const x = 14, y = 14;
+
+    // Outer glow
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, breath + 2);
+    glow.addColorStop(0, "rgba(190,181,218,0.4)");
+    glow.addColorStop(1, "rgba(190,181,218,0)");
+    ctx.beginPath();
+    ctx.arc(x, y, breath + 2, 0, Math.PI * 2);
+    ctx.fillStyle = glow;
+    ctx.fill();
+
+    // Body gradient
+    const body = ctx.createRadialGradient(x, y, 0, x, y, breath);
+    body.addColorStop(0, "rgba(210,215,235,0.9)");
+    body.addColorStop(1, "rgba(88,170,184,0.8)");
+    ctx.beginPath();
+    ctx.arc(x, y, breath, 0, Math.PI * 2);
+    ctx.fillStyle = body;
+    ctx.fill();
+
+    // Specular highlight
+    ctx.beginPath();
+    ctx.ellipse(x - 0.6, y - 0.6, 1.2, 1.4, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    ctx.fill();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  LIVO PANEL MANAGEMENT
+// ═══════════════════════════════════════════════════════════════
+function shouldShowLivoPanel() {
+  if (!S.selectedId) return false;
+  const node = S.nodes.find(n => n.id === S.selectedId);
+  if (!node || node.riskLevel !== "high") return false;
+
+  const viewer = ALL_NODES.find(n => n.id === S.viewerId);
+  if (!viewer || viewer.role !== "parent") return false;
+
+  return true;
+}
+
+function updateLivoPanel() {
+  const panel = document.getElementById("livoChatPanel");
+  const shouldShow = shouldShowLivoPanel();
+  panel.style.display = shouldShow ? "flex" : "none";
+
+  if (shouldShow && S.livoMode === "coaching") {
+    renderCoachingScripts();
+  }
+  updateFabVisibility();
+}
+
+function renderCoachingScripts() {
+  const container = document.getElementById("livoScriptCards");
+  let html = "";
+  // Priority: Mediator > Trendlife > Default
+  const useMediator = _mediatorAlert && S.selectedId === _mediatorAlert.targetNodeId;
+  const useTrendlife = !useMediator && _highRiskAlert && S.selectedId === _highRiskAlert.targetNodeId;
+  const activeScripts = useMediator ? _mediatorAlert.scripts : useTrendlife ? _highRiskAlert.scripts : COACHING_SCRIPTS;
+
+  if (useMediator) {
+    html += `<div style="padding:0 0 8px;font-size:10px;color:#d97706;text-transform:uppercase;letter-spacing:1px;font-weight:600">🏛 Respect & Honor — ${_mediatorAlert.elderLabel} → ${_mediatorAlert.parentLabel}</div>`;
+    html += `<div style="padding:0 0 10px;font-size:10px;color:#7A9AAB;line-height:1.5">This is <strong style="color:#d97706">not a standard alert</strong>. Approach ${_mediatorAlert.elderLabel} with deference — she is the expert, not the problem.</div>`;
+  } else if (useTrendlife) {
+    html += `<div style="padding:0 0 8px;font-size:10px;color:#ef4444;text-transform:uppercase;letter-spacing:1px;font-weight:600">⚠ Trendlife Alert — ${_highRiskAlert.childLabel} → ${_highRiskAlert.parentLabel}</div>`;
+  }
+
+  activeScripts.forEach((script, i) => {
+    const tone = script.tone;
+    const msg = script.message;
+    const follow = script.followUp || script.follow || "";
+    const note = script.livoNote || "";
+    const noteColor = useMediator ? "rgba(217,119,6,.5)" : "rgba(129,140,248,.6)";
+    html += `
+      <div class="livo-script-card">
+        <div class="livo-script-tone ${tone.toLowerCase().replace(/[^a-z]/g,'')}">${tone}</div>
+        <div class="livo-script-msg">"${msg}"</div>
+        <div class="livo-script-follow">💡 ${follow}</div>
+        ${note ? `<div style="font-size:9px;color:${noteColor};margin:4px 0 6px;line-height:1.4">${note}</div>` : ""}
+        <button class="livo-script-btn" onclick="applyScript(${i})">Apply to Message →</button>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function applyScript(index) {
+  const useMediator = _mediatorAlert && S.selectedId === _mediatorAlert.targetNodeId;
+  const useTrendlife = !useMediator && _highRiskAlert && S.selectedId === _highRiskAlert.targetNodeId;
+  const scripts = useMediator ? _mediatorAlert.scripts : useTrendlife ? _highRiskAlert.scripts : COACHING_SCRIPTS;
+  const script = scripts[index];
+  const tone = script.tone;
+  const prefix = useMediator ? "🏛 Respect & Honor" : useTrendlife ? "⚠ Trendlife Alert" : "Coaching";
+  alert(`${prefix} — Applied "${tone.toUpperCase()}" script:\n\n"${script.message}"`);
+}
+
+function togglePracticeMode() {
+  const coachingSection = document.getElementById("livoCoachingSection");
+  const chatSection = document.getElementById("livoChatSection");
+  const practiceBtn = document.getElementById("livoPracticeBtn");
+
+  if (S.livoMode === "coaching") {
+    S.livoMode = "practice";
+    S.livoChatHistory = [];
+    S.livoPracticeIndex = 0;
+
+    coachingSection.style.display = "none";
+    chatSection.style.display = "flex";
+    practiceBtn.classList.add("active");
+    practiceBtn.textContent = "Exit Practice Mode";
+
+    initializePracticeChat();
+  } else {
+    S.livoMode = "coaching";
+
+    coachingSection.style.display = "block";
+    chatSection.style.display = "none";
+    practiceBtn.classList.remove("active");
+    practiceBtn.textContent = "Practice with Livo";
+
+    renderCoachingScripts();
+  }
+}
+
+function initializePracticeChat() {
+  const chatArea = document.getElementById("livoChatArea");
+  const input = document.getElementById("livoInput");
+
+  chatArea.innerHTML = `
+    <div class="livo-msg livo">
+      <div class="livo-bubble">Hi! I'm here to help you practice having a conversation with your child about that app. Type your opening message, and I'll play the role of your daughter. Good luck!</div>
+    </div>
+  `;
+  input.placeholder = "Type your opening message...";
+  input.value = "";
+  input.focus();
+}
+
+function sendLivoMessage() {
+  const input = document.getElementById("livoInput");
+  const chatArea = document.getElementById("livoChatArea");
+  const msg = input.value.trim();
+
+  if (!msg) return;
+
+  // Add user message
+  const userMsg = document.createElement("div");
+  userMsg.className = "livo-msg user";
+  userMsg.innerHTML = `<div class="livo-bubble">${msg}</div>`;
+  chatArea.appendChild(userMsg);
+
+  input.value = "";
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  // ScholarFilter: intercept homework questions from child viewers
+  const viewerNode = ALL_NODES.find(n => n.id === S.viewerId);
+  const scholarResult = scholar_filter(msg, viewerNode);
+  if (scholarResult.active) {
+    setTimeout(() => {
+      const livoMsg = document.createElement("div");
+      livoMsg.className = "livo-msg livo";
+      livoMsg.innerHTML = `<div class="livo-bubble"><span class="livo-tone-badge scaffolding">Scaffolding</span>${scholarResult.scaffoldResponse}</div>`;
+      chatArea.appendChild(livoMsg);
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }, 600);
+    return;
+  }
+
+  // Determine if we're in mediator mode (Grandma practice)
+  const isMediatorPractice = _mediatorAlert && S.selectedId === _mediatorAlert.targetNodeId;
+
+  // Simulate reply after delay — use Grandma replies for mediator, child replies otherwise
+  setTimeout(() => {
+    const reply = isMediatorPractice
+      ? GRANDMA_PRACTICE_REPLIES[_grandmaPracticeIdx % GRANDMA_PRACTICE_REPLIES.length]
+      : PRACTICE_REPLIES[S.livoPracticeIndex % PRACTICE_REPLIES.length];
+    const rpName = isMediatorPractice ? (_mediatorAlert.elderLabel || "Grandma") : "Child";
+    const rpColor = isMediatorPractice ? "#fbbf24" : "#a855f7";
+
+    const childMsg = document.createElement("div");
+    childMsg.className = "livo-msg child";
+    childMsg.innerHTML = `<div class="livo-bubble" style="border-color:${rpColor}30;background:${rpColor}10"><span style="font-size:9px;font-weight:600;color:${rpColor};opacity:.7;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">${rpName} (role-play)</span>${reply.elderReply || reply.childReply}</div>`;
+    chatArea.appendChild(childMsg);
+
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    // Simulate feedback after delay
+    setTimeout(() => {
+      const feedbackMsg = document.createElement("div");
+      feedbackMsg.className = "livo-msg feedback";
+      feedbackMsg.innerHTML = `
+        <div class="livo-bubble">
+          <span class="livo-feedback-rating ${reply.rating}">${reply.rating === "great" ? "\u2605 GREAT" : reply.rating === "good" ? "\u25d0 GOOD" : "\u26a0 NEEDS WORK"}</span>
+          ${reply.feedback}
+        </div>
+      `;
+      chatArea.appendChild(feedbackMsg);
+
+      if (isMediatorPractice) _grandmaPracticeIdx++;
+      else S.livoPracticeIndex++;
+      chatArea.scrollTop = chatArea.scrollHeight;
+    }, 400);
+  }, 800);
+}
+
+function closeLivoPanel() {
+  S.selectedId = null;
+  S.livoMode = "coaching";
+  updateHighlights();
+  hideDetail();
+  document.getElementById("livoChatPanel").style.display = "none";
+  // Reset practice mode UI
+  const cs = document.getElementById("livoCoachingSection");
+  const ch = document.getElementById("livoChatSection");
+  const pb = document.getElementById("livoPracticeBtn");
+  if (cs) cs.style.display = "block";
+  if (ch) ch.style.display = "none";
+  if (pb) { pb.classList.remove("active"); pb.textContent = "Practice with Livo"; }
+  updateFabVisibility();
+}
+
+function openCoachMode() {
+  // Auto-select the suspicious app node and switch viewer to parent if needed
+  const viewer = ALL_NODES.find(n => n.id === S.viewerId);
+  if (!viewer || viewer.role !== "parent") {
+    // Switch to Dad (parent) so coaching panel works
+    S.viewerId = "m-dad";
+    document.getElementById("viewerSelect").value = "m-dad";
+    rebuildGraph();
+  }
+  // Select the high-risk node
+  S.selectedId = "d-suspicious-app";
+  updateHighlights();
+  const node = S.nodes.find(n => n.id === "d-suspicious-app");
+  if (node) showDetail(node);
+  updateLivoPanel();
+  animateLivoSphere();
+}
+
+function updateFabVisibility() {
+  const fab = document.getElementById("livoFab");
+  if (!fab) return;
+  const panel = document.getElementById("livoChatPanel");
+  const panelOpen = panel && panel.style.display !== "none";
+  const viewer = ALL_NODES.find(n => n.id === S.viewerId);
+  const isParent = viewer && viewer.role === "parent";
+  fab.style.display = (isParent && !panelOpen) ? "flex" : "none";
+}
+
+// ── Livo FAB sphere animation ──
+function animateLivoFabSphere() {
+  const canvas = document.getElementById("livoFabSphere");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const dpr = 2;
+
+  function frame(t) {
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, 36, 36);
+
+    const time = t / 1000;
+    const breath = Math.sin(time * 1.2) * 1.5 + 8;
+    const x = 18, y = 18;
+
+    // Outer glow
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, breath + 6);
+    glow.addColorStop(0, "rgba(190,181,218,0.35)");
+    glow.addColorStop(0.6, "rgba(88,170,184,0.15)");
+    glow.addColorStop(1, "rgba(88,170,184,0)");
+    ctx.beginPath();
+    ctx.arc(x, y, breath + 6, 0, Math.PI * 2);
+    ctx.fillStyle = glow;
+    ctx.fill();
+
+    // Body gradient
+    const body = ctx.createRadialGradient(x, y, 0, x, y, breath);
+    body.addColorStop(0, "rgba(210,215,235,0.95)");
+    body.addColorStop(0.5, "rgba(190,181,218,0.85)");
+    body.addColorStop(1, "rgba(88,170,184,0.8)");
+    ctx.beginPath();
+    ctx.arc(x, y, breath, 0, Math.PI * 2);
+    ctx.fillStyle = body;
+    ctx.fill();
+
+    // Specular highlight
+    ctx.beginPath();
+    ctx.ellipse(x - 2, y - 2, 3, 3.5, -Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.45)";
+    ctx.fill();
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  VISIBILITY GATE
+// ═══════════════════════════════════════════════════════════════
+function findOwner(nid,edges){for(const e of edges){if(e.target===nid&&e.source.startsWith("m-"))return e.source;if(e.source===nid&&e.target.startsWith("m-"))return e.target}return null}
+function isParentOf(vid,oid,edges){return edges.some(e=>e.relation==="parent_of"&&e.source===vid&&e.target===oid)}
+function isGrandparentOf(vid,oid,edges){return edges.some(e=>e.relation==="grandparent_of"&&e.source===vid&&e.target===oid)}
+function isCaregiverOf(vid,oid,edges){return edges.some(e=>e.relation==="caregiver_of"&&e.source===vid&&e.target===oid)}
+
+function applyGate(nodes,edges,viewerId){
+  const viewer=nodes.find(n=>n.id===viewerId);
+  const viewerRole=viewer?viewer.role:null;
+  const isGP=viewerRole==="grandparent";
+  const isCG=viewerRole==="caregiver";
+  const vis=nodes.filter(n=>{
+    if(n.isAchievement)return true;
+    if(n.type==="member")return true;
+    const v=n.visibility||"family";
+    if(v==="family")return true;
+    const ow=findOwner(n.id,edges);
+    if(ow===viewerId)return true;
+    // health_only: parents, grandparents, and caregivers can see
+    if(v==="health_only"){
+      if(!ow)return false;
+      if(isParentOf(viewerId,ow,edges))return true;
+      if(isGrandparentOf(viewerId,ow,edges))return true;
+      if(isCaregiverOf(viewerId,ow,edges))return true;
+      return false;
+    }
+    // Caregivers cannot see guarded (financial) or private nodes
+    if(isCG){
+      return false;
+    }
+    // Grandparents can see guarded items of grandchildren but not private
+    if(isGP){
+      if(v==="guarded")return ow?isGrandparentOf(viewerId,ow,edges):false;
+      if(v==="private")return false;
+      return true;
+    }
+    if(v==="guarded"){if(ow&&isParentOf(viewerId,ow,edges))return true;if(n.riskLevel==="high"&&ow&&isParentOf(ow,viewerId,edges))return true;return false}
+    if(v==="private"){if(n.riskLevel==="high"&&ow&&isParentOf(viewerId,ow,edges))return true;return false}
+    return true;
+  });
+  // Additional: caregivers cannot see financial documents
+  const filtered=isCG?vis.filter(n=>!(n.type==="document"&&n.docType==="financial")):vis;
+  const ids=new Set(filtered.map(n=>n.id));
+  return{nodes:filtered,edges:edges.filter(e=>ids.has(e.source)&&ids.has(e.target))};
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  GRAPH REBUILD
+// ═══════════════════════════════════════════════════════════════
+function rebuildGraph(){
+  const gated=applyGate(ALL_NODES,ALL_EDGES,S.viewerId);
+  const filtered=gated.nodes.filter(n=>S.visibleTypes[n.type]);
+  const fIds=new Set(filtered.map(n=>n.id));
+  const edges=gated.edges.filter(e=>fIds.has(e.source)&&fIds.has(e.target));
+
+  // Preserve positions from existing nodes
+  const posMap={};
+  S.nodes.forEach(n=>{posMap[n.id]={x:n.x,y:n.y}});
+
+  S.nodes=filtered.map(n=>{
+    const old=posMap[n.id];
+    return{...n,x:old?old.x:(S.W/2+(Math.random()-.5)*200),y:old?old.y:(S.H/2+(Math.random()-.5)*200)};
+  });
+  S.edges=edges.map(e=>({...e,source:e.source,target:e.target}));
+
+  // Rebuild simulation
+  if(S.sim)S.sim.stop();
+  S.sim=d3.forceSimulation(S.nodes)
+    .force("charge",d3.forceManyBody().strength(-180))
+    .force("link",d3.forceLink(S.edges).id(d=>d.id).distance(80).strength(0.5))
+    .force("center",d3.forceCenter(S.W/2,S.H/2).strength(0.3))
+    .force("collision",d3.forceCollide().radius(d=>(NODE_RADIUS[d.type]||5)*DEPTH_SCALE[depthOf(d)]+4))
+    .alphaDecay(0.02)
+    .velocityDecay(0.3);
+
+  updateCounts();
+  updateHighlights();
+  updateLivoPanel();
+  buildInsights();
+}
+
+function updateCounts(){
+  document.getElementById("nodeCount").textContent=S.nodes.length;
+  document.getElementById("edgeCount").textContent=S.edges.length;
+  const v=ALL_NODES.find(n=>n.id===S.viewerId);
+  document.getElementById("statusRight").textContent="Viewer: "+(v?v.label:"Unknown");
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  HIGHLIGHTS
+// ═══════════════════════════════════════════════════════════════
+function updateHighlights(){
+  if(!S.selectedId){S.highlightedIds=null;S.highlightedEdges=null;return}
+  const ids=new Set([S.selectedId]);
+  const ekeys=new Set();
+  S.edges.forEach(e=>{
+    const sid=typeof e.source==="object"?e.source.id:e.source;
+    const tid=typeof e.target==="object"?e.target.id:e.target;
+    if(sid===S.selectedId){ids.add(tid);ekeys.add(sid+"__"+tid)}
+    else if(tid===S.selectedId){ids.add(sid);ekeys.add(sid+"__"+tid)}
+  });
+  S.highlightedIds=ids;
+  S.highlightedEdges=ekeys;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MEMBER HEALTH
+// ═══════════════════════════════════════════════════════════════
+function memberHealth(mid){
+  let risk=0,ach=0;
+  S.edges.forEach(e=>{
+    const sid=typeof e.source==="object"?e.source.id:e.source;
+    const tid=typeof e.target==="object"?e.target.id:e.target;
+    let cid=null;
+    if(sid===mid)cid=tid;else if(tid===mid)cid=sid;
+    if(!cid)return;
+    const cn=S.nodes.find(n=>n.id===cid);
+    if(!cn||cn.type==="member")return;
+    if(cn.riskLevel==="high")risk++;
+    if(cn.isAchievement)ach++;
+  });
+  return{risk,ach};
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NODE OWNER MAP
+// ═══════════════════════════════════════════════════════════════
+function ownerOf(nid){return findOwner(nid,ALL_EDGES)}
+
+// ═══════════════════════════════════════════════════════════════
+//  CANVAS RENDERING
+// ═══════════════════════════════════════════════════════════════
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+  const area=document.getElementById("graphArea");
+  S.W=area.clientWidth;S.H=area.clientHeight;
+  canvas.width=S.W*devicePixelRatio;
+  canvas.height=S.H*devicePixelRatio;
+  canvas.style.width=S.W+"px";
+  canvas.style.height=S.H+"px";
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  if(S.sim)S.sim.force("center",d3.forceCenter(S.W/2,S.H/2).strength(0.3));
+}
+
+function render(){
+  S.tick=performance.now();
+  if(S.bloom>0.001)S.bloom*=0.92;else S.bloom=0;
+
+  ctx.clearRect(0,0,S.W,S.H);
+  ctx.fillStyle="#1D3040";
+  ctx.fillRect(0,0,S.W,S.H);
+
+  // Draw links
+  S.edges.forEach(e=>paintLink(e));
+
+  // Draw nodes sorted by depth (bottom first)
+  const sorted=[...S.nodes].sort((a,b)=>depthOf(a)-depthOf(b));
+  sorted.forEach(n=>paintNode(n));
+
+  requestAnimationFrame(render);
+}
+
+// ── paintLink ──
+function paintLink(link){
+  const src=typeof link.source==="object"?link.source:S.nodes.find(n=>n.id===link.source);
+  const tgt=typeof link.target==="object"?link.target:S.nodes.find(n=>n.id===link.target);
+  if(!src||!tgt||src.x==null||tgt.x==null)return;
+  const sid=src.id,tid=tgt.id;
+  const tick=S.tick;
+
+  // Dimmed check
+  let dimmed=false;
+  if(S.highlightedEdges){
+    const key=sid+"__"+tid;
+    if(!S.highlightedEdges.has(key))dimmed=true;
+  }
+
+  // Base line
+  ctx.beginPath();
+  ctx.moveTo(src.x,src.y);
+  ctx.lineTo(tgt.x,tgt.y);
+  const w=link.weight||0;
+  if(dimmed){ctx.strokeStyle="#152535";ctx.lineWidth=0.5}
+  else if(w>=4&&sid.startsWith("m-")&&tid.startsWith("m-")){ctx.strokeStyle=w>=5?"#7BC0D0":"#58AAB8";ctx.lineWidth=0.6+(w/5)*1.4}
+  else if(S.highlightedEdges){ctx.strokeStyle="#7BC0D0";ctx.lineWidth=1.5}
+  else{ctx.strokeStyle="#2A4555";ctx.lineWidth=1}
+  ctx.stroke();
+
+  // Sync Glow
+  if(S.syncedIds&&!dimmed){
+    const sSync=S.syncedIds.has(sid),tSync=S.syncedIds.has(tid);
+    const sM=sid.startsWith("m-"),tM=tid.startsWith("m-");
+    if((sSync&&tM)||(tSync&&sM)||(sSync&&tSync)){
+      const p=(Math.sin(tick/400)+1)/2;
+      ctx.save();ctx.beginPath();ctx.moveTo(src.x,src.y);ctx.lineTo(tgt.x,tgt.y);
+      ctx.strokeStyle=`rgba(175,165,210,${.06+p*.08})`;ctx.lineWidth=6+p*3;ctx.lineCap="round";ctx.stroke();ctx.restore();
+      ctx.save();ctx.beginPath();ctx.moveTo(src.x,src.y);ctx.lineTo(tgt.x,tgt.y);ctx.setLineDash([5,4]);ctx.lineDashOffset=-tick/60;
+      ctx.strokeStyle=`rgba(175,165,210,${.35+p*.35})`;ctx.lineWidth=1.5+p*.5;ctx.lineCap="round";ctx.stroke();ctx.setLineDash([]);ctx.restore();
+      const t=((tick/1200)%1);
+      ctx.beginPath();ctx.arc(src.x+(tgt.x-src.x)*t,src.y+(tgt.y-src.y)*t,1.5+p,0,Math.PI*2);
+      ctx.fillStyle=`rgba(200,195,225,${.6+p*.3})`;ctx.fill();
+    }
+  }
+
+  // Weight glow overlay
+  if(w>=4&&sid.startsWith("m-")&&tid.startsWith("m-")&&!dimmed){
+    const p=(Math.sin(tick/600)+1)/2;
+    ctx.save();ctx.beginPath();ctx.moveTo(src.x,src.y);ctx.lineTo(tgt.x,tgt.y);
+    ctx.strokeStyle=`rgba(123,192,208,${.08+(w/5)*.12+p*.04})`;ctx.lineWidth=(w/5)*4+p*2;ctx.lineCap="round";ctx.stroke();ctx.restore();
+  }
+}
+
+// ── Person icon for member nodes ──
+function drawPersonIcon(ctx, x, y, r, node, isDimmed) {
+  const isChild = node.role === "child";
+  const isElder = node.role === "grandparent";
+  const isFemale = node.gender === "female";
+  const alpha = isDimmed ? 0.3 : 0.9;
+
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+
+  // Head
+  const headR = isChild ? r * 0.26 : r * 0.28;
+  const headY = y - r * 0.22;
+  ctx.beginPath(); ctx.arc(x, headY, headR, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+  ctx.fill();
+
+  // Body / torso
+  const bodyTop = headY + headR + r * 0.06;
+  const bodyBot = y + r * 0.85;
+  const sw = isChild ? r * 0.38 : r * 0.48;
+  const hw = isFemale ? r * 0.28 : r * 0.42;
+
+  ctx.beginPath();
+  ctx.moveTo(x - sw, bodyTop);
+  if (isFemale) {
+    const waistY = bodyTop + (bodyBot - bodyTop) * 0.4;
+    const waistW = isChild ? r * 0.22 : r * 0.26;
+    ctx.quadraticCurveTo(x - waistW, waistY, x - hw, bodyBot);
+    ctx.lineTo(x + hw, bodyBot);
+    ctx.quadraticCurveTo(x + waistW, waistY, x + sw, bodyTop);
+  } else {
+    ctx.lineTo(x - hw, bodyBot);
+    ctx.lineTo(x + hw, bodyBot);
+    ctx.lineTo(x + sw, bodyTop);
+  }
+  ctx.closePath();
+  ctx.fillStyle = `rgba(255,255,255,${alpha * 0.85})`;
+  ctx.fill();
+
+  // Hair accent
+  if (!isDimmed) {
+    if (isElder) {
+      // Grandparent: silver/grey hair cap
+      ctx.beginPath();
+      ctx.ellipse(x, headY - headR * 0.15, headR * 1.1, headR * 0.9, 0, Math.PI, 0);
+      ctx.fillStyle = `rgba(200,210,220,${alpha * 0.6})`;
+      ctx.fill();
+      if (isFemale) {
+        // Grandma: bun on top
+        ctx.beginPath();
+        ctx.arc(x, headY - headR * 0.9, headR * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,210,220,${alpha * 0.55})`;
+        ctx.fill();
+      }
+    } else if (isFemale) {
+      ctx.beginPath();
+      if (isChild) {
+        ctx.arc(x - headR * 0.9, headY - headR * 0.5, headR * 0.35, 0, Math.PI * 2);
+        ctx.arc(x + headR * 0.9, headY - headR * 0.5, headR * 0.35, 0, Math.PI * 2);
+      } else {
+        ctx.ellipse(x, headY - headR * 0.1, headR * 1.15, headR * 1.25, 0, Math.PI, 0);
+      }
+      ctx.fillStyle = `rgba(255,255,255,${alpha * 0.5})`;
+      ctx.fill();
+    }
+  }
+
+  ctx.restore();
+}
+
+// ── paintNode ──
+function paintNode(node){
+  const depth=depthOf(node);
+  const baseR=NODE_RADIUS[node.type]||5;
+  const r=baseR*DEPTH_SCALE[depth];
+  const x=node.x,y=node.y;
+  const tick=S.tick;
+  if(x==null||y==null)return;
+
+  const isDimmed=S.highlightedIds!==null&&!S.highlightedIds.has(node.id);
+  const isSelected=node.id===S.selectedId;
+  const isHighRisk=node.riskLevel==="high";
+  const isMedRisk=node.riskLevel==="medium";
+  const isAch=!!node.isAchievement;
+  const isOwner=node.type==="member"||ownerOf(node.id)===S.viewerId;
+  const viewerNode=ALL_NODES.find(n=>n.id===S.viewerId);
+  const viewerIsParent=viewerNode&&viewerNode.role==="parent";
+  const isMasked=isHighRisk&&!isOwner&&!viewerIsParent;
+  const isPrivate=!isOwner&&!isMasked&&(node.visibility==="private"||node.visibility==="guarded");
+
+  // ── Risk glow ──
+  if(isHighRisk&&!isDimmed){
+    const p=(Math.sin(tick/300)+1)/2;
+    const outerR=r+8+p*6;
+    const g=ctx.createRadialGradient(x,y,r,x,y,outerR);
+    g.addColorStop(0,`rgba(226,88,96,${.15+p*.25})`);g.addColorStop(1,"rgba(226,88,96,0)");
+    ctx.beginPath();ctx.arc(x,y,outerR,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+2,0,Math.PI*2);ctx.strokeStyle=RISK_HIGH;ctx.lineWidth=1.5+p;ctx.shadowColor=RISK_HIGH;ctx.shadowBlur=8+p*8;ctx.stroke();ctx.shadowBlur=0;
+  }
+  if(isMedRisk&&!isDimmed){
+    const p=(Math.sin(tick/500)+1)/2;const outerR=r+6+p*4;
+    const g=ctx.createRadialGradient(x,y,r,x,y,outerR);g.addColorStop(0,`rgba(196,75,75,${.1+p*.15})`);g.addColorStop(1,"rgba(196,75,75,0)");
+    ctx.beginPath();ctx.arc(x,y,outerR,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+1.5,0,Math.PI*2);ctx.strokeStyle=RISK_MED;ctx.lineWidth=1+p*.5;ctx.shadowColor=RISK_MED;ctx.shadowBlur=6+p*4;ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  // ── Achievement particles ──
+  if(isAch&&!isDimmed){
+    const sh=(Math.sin(tick/400+1)+1)/2;const outerR=r+8+sh*4;
+    const g=ctx.createRadialGradient(x,y,r,x,y,outerR);g.addColorStop(0,`rgba(235,184,48,${.2+sh*.2})`);g.addColorStop(1,"rgba(235,184,48,0)");
+    ctx.beginPath();ctx.arc(x,y,outerR,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+2,0,Math.PI*2);ctx.strokeStyle=ACH_COLOR;ctx.lineWidth=1.5;ctx.shadowColor=ACH_COLOR;ctx.shadowBlur=10+sh*6;ctx.stroke();ctx.shadowBlur=0;
+    for(let i=0;i<14;i++){
+      const ph=(i/14)*Math.PI*2;const t=((tick+i*(2200/14))%2200)/2200;
+      const ang=ph+tick/4000;const dist=r+3+t*22;const dy=-t*t*10;
+      const px=x+Math.cos(ang)*dist,py=y+Math.sin(ang)*dist+dy;
+      const a=(1-t)*.85;const sz=.4+Math.sin(t*Math.PI)*1.8;
+      if(a>.02){
+        const r255=Math.round(234+(1-t)*21),g255=Math.round(179+t*50);
+        ctx.beginPath();ctx.arc(px,py,sz,0,Math.PI*2);ctx.fillStyle=`rgba(${r255},${g255},8,${a})`;ctx.fill();
+        if(sz>1){ctx.beginPath();ctx.arc(px,py,sz+1.5,0,Math.PI*2);ctx.fillStyle=`rgba(235,184,48,${a*.15})`;ctx.fill()}
+      }
+    }
+  }
+
+  // ── House rule glow ──
+  if(node.type==="house_rule"&&!isDimmed&&!isHighRisk){
+    const sh=(Math.sin(tick/500)+1)/2;const outerR=r+6+sh*3;
+    const g=ctx.createRadialGradient(x,y,r,x,y,outerR);g.addColorStop(0,`rgba(235,184,48,${.18+sh*.15})`);g.addColorStop(1,"rgba(235,184,48,0)");
+    ctx.beginPath();ctx.arc(x,y,outerR,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+1.5,0,Math.PI*2);ctx.strokeStyle=ACH_COLOR;ctx.lineWidth=1.2+sh*.5;ctx.shadowColor=ACH_COLOR;ctx.shadowBlur=8+sh*4;ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  // ── Health node pulse ──
+  if(node.type==="health"&&!isDimmed){
+    const hp=(Math.sin(tick/600)+1)/2;const outerR=r+5+hp*2;
+    const hg=ctx.createRadialGradient(x,y,r,x,y,outerR);hg.addColorStop(0,`rgba(239,68,68,${.15+hp*.1})`);hg.addColorStop(1,"rgba(239,68,68,0)");
+    ctx.beginPath();ctx.arc(x,y,outerR,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+1,0,Math.PI*2);ctx.strokeStyle="#ef4444";ctx.lineWidth=1+hp*.4;ctx.shadowColor="#ef4444";ctx.shadowBlur=6+hp*3;ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  // ── Selected glow ──
+  if(isSelected&&!isHighRisk&&!isAch){
+    const gr=ctx.createRadialGradient(x,y,r,x,y,r+10);gr.addColorStop(0,GLOW+"40");gr.addColorStop(1,GLOW+"00");
+    ctx.beginPath();ctx.arc(x,y,r+10,0,Math.PI*2);ctx.fillStyle=gr;ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,r+2,0,Math.PI*2);ctx.strokeStyle=GLOW;ctx.lineWidth=2;ctx.shadowColor=GLOW;ctx.shadowBlur=12;ctx.stroke();ctx.shadowBlur=0;
+  }
+
+  // ── Z-depth shadows ──
+  if(!isDimmed){
+    if(depth===0){
+      ctx.save();ctx.beginPath();ctx.ellipse(x,y+r+2,r*1.4,r*.4,0,0,Math.PI*2);ctx.fillStyle="rgba(0,0,0,.35)";ctx.fill();
+      ctx.beginPath();ctx.arc(x,y,r+1,0,Math.PI*2);ctx.setLineDash([2,3]);ctx.strokeStyle="rgba(42,110,120,.2)";ctx.lineWidth=.8;ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    }else if(depth===2){
+      ctx.save();ctx.beginPath();ctx.ellipse(x+1.5,y+r+5,r*1.1,r*.3,0,0,Math.PI*2);ctx.fillStyle="rgba(0,0,0,.25)";ctx.fill();
+      const fp=(Math.sin(tick/800)+1)/2;ctx.beginPath();ctx.arc(x,y,r+2+fp,0,Math.PI*2);ctx.strokeStyle=`rgba(175,165,210,${.12+fp*.08})`;ctx.lineWidth=.8;ctx.stroke();ctx.restore();
+    }
+  }
+
+  // ── Glass node body ──
+  let baseColor,fillAlpha;
+  if(isDimmed){baseColor="#1A3040";fillAlpha=.4}
+  else if(isHighRisk){baseColor=RISK_HIGH;fillAlpha=.85}
+  else if(isMedRisk){baseColor=RISK_MED;fillAlpha=.85}
+  else if(isAch){baseColor=ACH_COLOR;fillAlpha=.85}
+  else if(isSelected){baseColor=GLOW;fillAlpha=.9}
+  else{baseColor=NODE_COLORS[node.type];fillAlpha=depth===0?.5:.7}
+
+  // Circle background
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.globalAlpha=fillAlpha;ctx.fillStyle=baseColor;ctx.fill();ctx.globalAlpha=1;
+  if(!isDimmed){
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.strokeStyle=baseColor;ctx.lineWidth=1;ctx.globalAlpha=.9;ctx.stroke();ctx.globalAlpha=1;
+    ctx.save();const hlX=x-r*.3,hlY=y-r*.3,hlR=r*.5;
+    const hlG=ctx.createRadialGradient(hlX,hlY,0,hlX,hlY,hlR);hlG.addColorStop(0,"rgba(255,255,255,.25)");hlG.addColorStop(1,"rgba(255,255,255,0)");
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.clip();ctx.beginPath();ctx.arc(hlX,hlY,hlR,0,Math.PI*2);ctx.fillStyle=hlG;ctx.fill();ctx.restore();
+  }
+
+  // Person icon overlay for member nodes
+  if(node.type==="member"){
+    drawPersonIcon(ctx, x, y, r, node, isDimmed);
+  }
+
+  // ── Frosted lock ──
+  if(isPrivate&&!isDimmed){
+    ctx.save();ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.clip();
+    ctx.fillStyle="rgba(20,35,48,.7)";ctx.fillRect(x-r,y-r,r*2,r*2);
+    ctx.strokeStyle="rgba(255,255,255,.04)";ctx.lineWidth=.5;
+    for(let i=-r*2;i<r*2;i+=3){ctx.beginPath();ctx.moveTo(x+i,y-r);ctx.lineTo(x+i+r,y+r);ctx.stroke()}
+    ctx.restore();
+    const ls=Math.max(r*.55,3);ctx.save();ctx.strokeStyle="rgba(155,175,190,.8)";ctx.lineWidth=Math.max(ls*.2,.8);ctx.lineCap="round";
+    ctx.beginPath();ctx.arc(x,y-ls*.15,ls*.3,Math.PI,0);ctx.stroke();
+    const bw=ls*.9,bh=ls*.65,by=y-ls*.15+ls*.5*.05;
+    ctx.fillStyle="rgba(95,125,140,.5)";ctx.beginPath();
+    const rr=ls*.1;const rx=x-bw/2;ctx.moveTo(rx+rr,by);ctx.lineTo(rx+bw-rr,by);ctx.quadraticCurveTo(rx+bw,by,rx+bw,by+rr);ctx.lineTo(rx+bw,by+bh-rr);ctx.quadraticCurveTo(rx+bw,by+bh,rx+bw-rr,by+bh);ctx.lineTo(rx+rr,by+bh);ctx.quadraticCurveTo(rx,by+bh,rx,by+bh-rr);ctx.lineTo(rx,by+rr);ctx.quadraticCurveTo(rx,by,rx+rr,by);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.beginPath();ctx.arc(x,by+bh*.4,ls*.1,0,Math.PI*2);ctx.fillStyle="rgba(155,175,190,.9)";ctx.fill();ctx.restore();
+  }
+
+  // ── Label ──
+  const fs=Math.max(10,2);
+  ctx.font=fs+"px -apple-system,sans-serif";ctx.textAlign="center";ctx.textBaseline="top";
+  if(isDimmed)ctx.fillStyle="#2E5060";
+  else if(isHighRisk)ctx.fillStyle=RISK_HIGH;
+  else if(isAch)ctx.fillStyle=ACH_COLOR;
+  else if(isSelected)ctx.fillStyle=GLOW;
+  else if(isPrivate)ctx.fillStyle="#7A9AAB";
+  else ctx.fillStyle="#F7F1E8";
+  const lbl=isMasked?"\u26a0 System Alert":isPrivate?"\ud83d\udd12 Private":node.label;
+  ctx.fillText(lbl,x,y+r+3);
+
+  // ── Health badges ──
+  if(node.type==="member"&&!isDimmed){
+    const h=memberHealth(node.id);
+    const badges=[];
+    if(h.risk>0)badges.push({color:RISK_HIGH});
+    if(h.ach>0)badges.push({color:ACH_COLOR});
+    if(!badges.length)badges.push({color:"#58AAB8"});
+    const br=2.5;const by2=y-r-br-2;const tw=badges.length*(br*2+2)-2;const sx=x-tw/2+br;
+    badges.forEach((b,i)=>{
+      const bx=sx+i*(br*2+2);
+      ctx.beginPath();ctx.arc(bx,by2,br+1.5,0,Math.PI*2);ctx.fillStyle=b.color+"30";ctx.fill();
+      ctx.beginPath();ctx.arc(bx,by2,br,0,Math.PI*2);ctx.fillStyle=b.color;ctx.fill();
+      if(b.color===RISK_HIGH){const p=(Math.sin(tick/400)+1)/2;ctx.beginPath();ctx.arc(bx,by2,br+1+p*2,0,Math.PI*2);ctx.strokeStyle=`rgba(226,88,96,${.3+p*.3})`;ctx.lineWidth=.5;ctx.stroke()}
+    });
+  }
+
+  // ── Sync Glow ring ──
+  if(S.syncedIds&&S.syncedIds.has(node.id)&&!isDimmed){
+    const sp=(Math.sin(tick/350+Math.PI/3)+1)/2;const sr=r+4+sp*4;
+    const sg=ctx.createRadialGradient(x,y,r,x,y,sr+4);sg.addColorStop(0,`rgba(175,165,210,${.12+sp*.1})`);sg.addColorStop(1,"rgba(175,165,210,0)");
+    ctx.beginPath();ctx.arc(x,y,sr+4,0,Math.PI*2);ctx.fillStyle=sg;ctx.fill();
+    ctx.save();ctx.beginPath();ctx.arc(x,y,sr,0,Math.PI*2);ctx.setLineDash([3,3]);ctx.lineDashOffset=-tick/80;
+    ctx.strokeStyle=`rgba(175,165,210,${.4+sp*.35})`;ctx.lineWidth=1+sp*.5;ctx.stroke();ctx.setLineDash([]);ctx.restore();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INSIGHTS
+// ═══════════════════════════════════════════════════════════════
+// Collapsed state for insight sections
+const _insightCollapsed={suggestion:true,reminder:true,celebration:false};
+
+function toggleInsightSection(cat){
+  if(cat==="safety")return;
+  _insightCollapsed[cat]=!_insightCollapsed[cat];
+  buildInsights();
+}
+
+function buildInsights(){
+  const el=document.getElementById("insightsContainer");
+  // ── Collect insights by category ──
+  const groups={safety:[],celebration:[],suggestion:[],reminder:[]};
+
+  // Safety: high-risk nodes (skip nodes covered by mediatorAlert to avoid duplicates)
+  ALL_NODES.filter(n=>n.riskLevel==="high").forEach(rn=>{
+    if(_mediatorAlert&&_mediatorAlert.targetNodeId===rn.id)return;
+    const ow=findOwner(rn.id,ALL_EDGES);
+    const mem=ow?ALL_NODES.find(n=>n.id===ow):null;
+    if(!mem)return;
+    const msg=`${rn.label} detected on ${mem.label}'s device. Review recommended.`;
+    const ev=SYNAPSE_EVENTS.find(e=>e.impact==="Negative"&&e.involvedMembers.includes(mem.id));
+    groups.safety.push(compactCard("safety","\ud83d\udee1\ufe0f",msg,"Review Now",`insightReviewRisk('${rn.id}')`,ev&&ev.timestamp));
+  });
+
+  // Mediator: Elder financial risk (Respect & Honor coaching)
+  if(_mediatorAlert){
+    groups.safety.push(compactCard("safety","\ud83c\udfdb\ufe0f",`${_mediatorAlert.elderLabel} is researching a high-risk investment. Use Respect & Honor \u2014 ask to learn from her expertise, not to intervene.`,"Talk to Family",`insightReviewRisk('${_mediatorAlert.targetNodeId}')`,_mediatorAlert.event.timestamp));
+  }
+
+  // Health: Grandma & Mom conditions
+  groups.safety.push(compactCard("safety","\ud83c\udfe5","Grandma has Diabetes + Low-Salt Diet. Mom is Lactose Intolerant. Coordinate meal plans.","View Health","selectNode('h-diabetes')"));
+
+  // Celebration: achievements
+  ALL_NODES.filter(n=>n.isAchievement).forEach(ach=>{
+    const ow=findOwner(ach.id,ALL_EDGES);
+    const mem=ow?ALL_NODES.find(n=>n.id===ow):null;
+    const ev=mem?SYNAPSE_EVENTS.find(e=>e.impact==="Positive"&&e.involvedMembers.includes(mem.id)):null;
+    groups.celebration.push(compactCard("celebration","\ud83c\udfc6",mem?`${mem.label} completed "${ach.label}"! Time to celebrate.`:`"${ach.label}" is a new achievement!`,"Celebrate",`insightCelebrate('${ach.id}')`,ev&&ev.timestamp));
+  });
+
+  // Suggestions (from family hike event)
+  const hikeEvent=SYNAPSE_EVENTS.find(e=>e.description.toLowerCase().includes("hike"));
+  groups.suggestion.push(compactCard("suggestion","\ud83c\udf72","Daughter avoids meat and Son loves soup \u2014 plan a meal everyone enjoys?","Plan Meal",`insightActivateCmd('food')`));
+  groups.suggestion.push(compactCard("suggestion","\u265f\ufe0f","Grandpa loves Chinese Chess and Morning Walks \u2014 plan an outing with the grandkids?","Plan Activity",`insightActivateCmd('hike')`));
+  groups.suggestion.push(compactCard("suggestion","\ud83d\udc9e","Dad & Mom interact frequently \u2014 plan a hiking outing?","Plan Hiking",`insightActivateCmd('hike')`,hikeEvent&&hikeEvent.timestamp));
+
+  // ValueFilter
+  const vf=value_filter(ALL_NODES,ALL_EDGES);
+  if(vf.restrictions.length>0){
+    const summary=vf.restrictions.map(r=>`${r.memberLabel}: ${r.label}`).join(", ");
+    groups.suggestion.push(compactCard("suggestion","\ud83d\udcb0",`ValueFilter: ${summary}. ${vf.cpNote}`,"Order Dinner",`insightActivateCmd('food')`));
+  }
+
+  // Reminders: authored documents
+  groups.reminder.push(compactCard("reminder","\ud83c\udf5c","Grandma authored the Soup Recipe that Son loves \u2014 a perfect cooking session together!","Cook Together",`insightActivateCmd('food')`));
+  ALL_EDGES.filter(e=>e.relation==="authored").forEach(e=>{
+    const mid=e.source.startsWith("m-")?e.source:e.target;
+    const did=e.source.startsWith("m-")?e.target:e.source;
+    const mem=ALL_NODES.find(n=>n.id===mid);
+    const doc=ALL_NODES.find(n=>n.id===did);
+    if(mem&&doc&&doc.visibility!=="private"){
+      const v=ALL_NODES.find(n=>n.id===S.viewerId);
+      groups.reminder.push(compactCard("reminder","\ud83d\udccb",`${mem.label} manages the ${doc.label}. Should ${v?v.label:"you"} help out tonight?`,"Offer Help",`insightOfferHelp('${did}','${mid}')`));
+    }
+  });
+
+  // ── Render grouped sections ──
+  let html="";
+  const SECTION_META={
+    safety:{icon:"\ud83d\udee1\ufe0f",label:"Safety"},
+    celebration:{icon:"\ud83c\udf89",label:"Celebration"},
+    suggestion:{icon:"\ud83d\udca1",label:"Suggestions"},
+    reminder:{icon:"\ud83d\udccb",label:"Reminders"}
+  };
+  for(const cat of ["safety","celebration","suggestion","reminder"]){
+    const items=groups[cat];
+    if(items.length===0)continue;
+    const m=SECTION_META[cat];
+    const collapsed=cat==="safety"?false:!!_insightCollapsed[cat];
+    const chevronCls=collapsed?"ish-chevron collapsed":"ish-chevron";
+    html+=`<div class="insight-section">`;
+    html+=`<button class="insight-section-header ish-${cat}" onclick="${cat==="safety"?"":"toggleInsightSection('"+cat+"')"}">`;
+    html+=`<span class="ish-icon">${m.icon}</span>`;
+    html+=`<span class="ish-label">${m.label}</span>`;
+    html+=`<span class="ish-count">(${items.length})</span>`;
+    if(cat!=="safety")html+=`<svg class="${chevronCls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>`;
+    html+=`</button>`;
+    if(!collapsed){
+      html+=`<div class="insight-section-cards">${items.join("")}</div>`;
+    }
+    html+=`</div>`;
+  }
+  el.innerHTML=html;
+}
+
+function formatRelativeTime(iso){
+  const now=new Date(),d=new Date(iso),diff=Math.floor((now-d)/60000);
+  if(diff<1)return"just now";
+  if(diff<60)return diff+"m ago";
+  const h=Math.floor(diff/60);
+  if(h<24)return h+"h ago";
+  const days=Math.floor(h/24);
+  if(days<7)return days+"d ago";
+  return d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+}
+function compactCard(cat,icon,msg,btn,action,ts){
+  const tsHtml=ts?`<span style="display:block;font-size:9px;color:#52525b;margin-top:2px">${formatRelativeTime(ts)}</span>`:"";
+  return`<div class="insight-card ic-${cat}"><span class="ic-icon">${icon}</span><div class="ic-msg">${msg}${tsHtml}</div><button class="ic-btn" onclick="${action}">${btn}</button></div>`;
+}
+
+// ── Tab switching ──
+function switchTab(tab){
+  const insightsTab=document.getElementById("tabInsights");
+  const receiptTab=document.getElementById("tabReceipt");
+  const rightScroll=document.getElementById("rightScroll");
+  const receiptPanel=document.getElementById("trustReceiptPanel");
+  if(tab==="receipt"){
+    insightsTab.style.color="#52525b";insightsTab.style.borderBottom="2px solid transparent";
+    receiptTab.style.color="#34d399";receiptTab.style.borderBottom="2px solid #10b981";
+    rightScroll.style.display="none";
+    receiptPanel.style.display="block";
+    buildTrustReceipt();
+  }else{
+    insightsTab.style.color="#818cf8";insightsTab.style.borderBottom="2px solid #6366f1";
+    receiptTab.style.color="#52525b";receiptTab.style.borderBottom="2px solid transparent";
+    rightScroll.style.display="block";
+    receiptPanel.style.display="none";
+  }
+}
+
+// ── Weekly Trust Receipt ──
+function buildTrustReceipt(){
+  const el=document.getElementById("trustReceiptPanel");
+  const children=ALL_NODES.filter(n=>n.type==="member"&&n.role==="child");
+  const childDetails=children.filter(c=>ALL_EDGES.some(e=>e.relation==="owns_device"&&(e.source===c.id||e.target===c.id))).map(c=>`${c.label} (age ${c.age||"?"})`);
+  const childNegEvents=SYNAPSE_EVENTS.filter(e=>e.impact==="Negative"&&e.involvedMembers.some(id=>children.some(c=>c.id===id)));
+  const scholarRedirects=Math.max(childDetails.length,childNegEvents.length);
+
+  const scamDetails=[];
+  if(_mediatorAlert)scamDetails.push(`${_mediatorAlert.elderLabel}: ${_mediatorAlert.event.description}`);
+  const elders=ALL_NODES.filter(n=>n.type==="member"&&n.role==="grandparent");
+  const elderIds=new Set(elders.map(n=>n.id));
+  ALL_NODES.filter(n=>n.type==="document"&&n.riskLevel==="high"&&n.docType==="financial").forEach(frn=>{
+    const conn=ALL_EDGES.some(e=>(e.source===frn.id&&elderIds.has(e.target))||(e.target===frn.id&&elderIds.has(e.source)));
+    if(conn){const d=`${frn.label} flagged`;if(!scamDetails.some(s=>s.includes(d)))scamDetails.push(d);}
+  });
+
+  const posEvents=SYNAPSE_EVENTS.filter(e=>e.impact==="Positive").length;
+  const negEvents=SYNAPSE_EVENTS.filter(e=>e.impact==="Negative").length;
+  const topPos=SYNAPSE_EVENTS.filter(e=>e.impact==="Positive").sort((a,b)=>b.intensity-a.intensity)[0];
+  const topMoment=topPos?topPos.description:"No positive moments";
+  const raw=50+posEvents*8-negEvents*5+scholarRedirects*3+scamDetails.length*10;
+  const bondScore=Math.max(0,Math.min(100,raw));
+  const scoreColor=bondScore>=80?"#34d399":bondScore>=60?"#fbbf24":"#ef4444";
+
+  const now=new Date();const weekAgo=new Date(now.getTime()-7*86400000);
+  const fmt=d=>d.toLocaleDateString("en-US",{month:"short",day:"numeric"});
+  const weekLabel=`${fmt(weekAgo)} \u2013 ${fmt(now)}`;
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:24px;height:24px;border-radius:6px;background:rgba(52,211,153,.15);display:flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#e4e4e7">Weekly Trust Receipt</div>
+        <div style="font-size:10px;color:#52525b">${weekLabel}</div>
+      </div>
+    </div>
+
+    <div style="padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:8px;margin-bottom:10px">
+      <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#52525b;margin-bottom:4px">Family Bond Score</div>
+      <div style="font-size:28px;font-weight:700;color:${scoreColor}">${bondScore}<span style="font-size:12px;color:#52525b">/100</span></div>
+      <div style="height:4px;border-radius:2px;background:#27272a;margin-top:6px;overflow:hidden"><div style="height:100%;border-radius:2px;background:${scoreColor};width:${bondScore}%"></div></div>
+      <div style="font-size:10px;color:rgba(52,211,153,.7);margin-top:4px">${posEvents} positive \u00b7 ${negEvents} handled</div>
+    </div>
+
+    <div style="padding:10px;border:1px solid rgba(132,204,22,.15);border-radius:8px;background:rgba(132,204,22,.04);margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:6px;background:rgba(132,204,22,.1);display:flex;align-items:center;justify-content:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#84cc16" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+        </div>
+        <div>
+          <span style="font-size:18px;font-weight:700;color:#84cc16">${scholarRedirects}</span>
+          <span style="font-size:11px;color:#a1a1aa;margin-left:6px">Learning Shortcuts Redirected</span>
+          <div style="font-size:9px;color:#52525b;margin-top:2px">ScholarFilter: Homework \u2192 understanding</div>
+        </div>
+      </div>
+      ${childDetails.length>0?`<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${childDetails.map(d=>`<span style="font-size:9px;padding:2px 6px;border-radius:10px;border:1px solid rgba(132,204,22,.2);background:rgba(132,204,22,.06);color:rgba(132,204,22,.8)">${d}</span>`).join("")}</div>`:""}
+    </div>
+
+    <div style="padding:10px;border:1px solid rgba(245,158,11,.15);border-radius:8px;background:rgba(245,158,11,.04);margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:6px;background:rgba(245,158,11,.1);display:flex;align-items:center;justify-content:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z"/></svg>
+        </div>
+        <div>
+          <span style="font-size:18px;font-weight:700;color:#fbbf24">${scamDetails.length}</span>
+          <span style="font-size:11px;color:#a1a1aa;margin-left:6px">Financial Scams Intercepted</span>
+          <div style="font-size:9px;color:#52525b;margin-top:2px">LivoMediator: Respect &amp; Honor</div>
+        </div>
+      </div>
+      ${scamDetails.length>0?`<div style="margin-top:6px;display:flex;flex-direction:column;gap:4px">${scamDetails.map(d=>`<div style="font-size:10px;padding:4px 8px;border-radius:4px;border:1px solid rgba(245,158,11,.15);background:rgba(245,158,11,.04);color:#d4d4d8;display:flex;align-items:center;gap:4px"><span style="width:5px;height:5px;border-radius:50%;background:#fbbf24;flex-shrink:0"></span>${d}</div>`).join("")}</div>`:""}
+    </div>
+
+    <div style="padding:10px;border:1px solid rgba(52,211,153,.15);border-radius:8px;background:rgba(52,211,153,.04);margin-bottom:10px">
+      <div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#52525b;margin-bottom:4px">Top Family Moment</div>
+      <div style="font-size:11px;color:#d4d4d8;line-height:1.5">${topMoment}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+      <div style="text-align:center;padding:6px;border-radius:6px;background:rgba(52,211,153,.06)"><div style="font-size:14px;font-weight:700;color:#34d399">${posEvents}</div><div style="font-size:9px;color:#52525b">Positive</div></div>
+      <div style="text-align:center;padding:6px;border-radius:6px;background:rgba(239,68,68,.06)"><div style="font-size:14px;font-weight:700;color:#ef4444">${negEvents}</div><div style="font-size:9px;color:#52525b">Handled</div></div>
+      <div style="text-align:center;padding:6px;border-radius:6px;background:rgba(129,140,248,.06)"><div style="font-size:14px;font-weight:700;color:#818cf8">${ALL_NODES.filter(n=>n.type==="member").length}</div><div style="font-size:9px;color:#52525b">Members</div></div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;padding:8px;border-radius:6px;background:rgba(129,140,248,.04)">
+      <div style="width:6px;height:6px;border-radius:50%;background:rgba(129,140,248,.6)"></div>
+      <div style="font-size:10px;font-style:italic;color:#52525b;flex:1">\u201cTrust is built one redirected shortcut at a time.\u201d</div>
+      <div style="font-size:9px;color:rgba(129,140,248,.5)">\u2014 Livo</div>
+    </div>
+  `;
+}
+
+// ── Grandma practice replies (offline fallback) ──
+const GRANDMA_PRACTICE_REPLIES=[
+  {elderReply:"Hmm, you want to learn about gold? That's good. When I was young, gold was the safest investment. This fund promises good returns.",feedback:"Good start \u2014 you positioned yourself as the learner. Try adding more curiosity about the firm's credentials.",rating:"good"},
+  {elderReply:"I appreciate you asking. But I've been managing money longer than you've been alive. I know what I'm doing.",feedback:"The elder felt slightly controlled. Try more respect, less control \u2014 ask her to teach you rather than questioning her judgment.",rating:"needs-work"},
+  {elderReply:"Actually, that's a good idea. Let's look at the paperwork together. I noticed some things I wasn't sure about too.",feedback:"Excellent! Your respectful approach made her feel safe to share her own doubts. Respect & Honor working perfectly.",rating:"great"},
+  {elderReply:"You're right, we should check the credentials. Maybe you can help me look up if this firm is registered?",feedback:"She's inviting you in. Your curiosity-based approach turned this into a collaborative investigation.",rating:"great"},
+  {elderReply:"Why are you asking about my finances? I can handle my own money.",feedback:"Try more respect, less control. Ask her to teach you about gold investing. Position her as the expert.",rating:"needs-work"},
+];
+let _grandmaPracticeIdx=0;
+
+// ── Insight Action Handlers ──
+
+function insightReviewRisk(nodeId) {
+  // Switch to parent viewer if needed (only parents can see private risk nodes)
+  const viewer = ALL_NODES.find(n => n.id === S.viewerId);
+  if (!viewer || (viewer.role !== "parent")) {
+    S.viewerId = "m-dad";
+    document.getElementById("viewerSelect").value = "m-dad";
+    rebuildGraph();
+  }
+  S.selectedId = nodeId;
+  updateHighlights();
+  const node = S.nodes.find(n => n.id === nodeId);
+  if (node) showDetail(node);
+  updateLivoPanel();
+  animateLivoSphere();
+  // Scroll graph to center on the node
+  scrollToNode(nodeId);
+}
+
+function insightActivateCmd(cmdKey) {
+  // Activate the sync glow command (same as clicking the command bar button)
+  if (S.activeCmd === cmdKey) return; // already active
+  activateCmd(cmdKey);
+  // Scroll sync panel into view
+  const sp = document.getElementById("syncPanel");
+  if (sp) sp.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function insightCelebrate(nodeId) {
+  // Select achievement node + trigger celebration sync glow on it and its owner
+  selectNode(nodeId);
+  // Build celebration sync glow: the achievement + its owner + all members
+  const ids = new Set([nodeId]);
+  const ow = findOwner(nodeId, ALL_EDGES);
+  if (ow) ids.add(ow);
+  ALL_NODES.filter(n => n.type === "member").forEach(n => ids.add(n.id));
+  S.syncedIds = ids;
+  // Show celebration sync panel
+  const node = ALL_NODES.find(n => n.id === nodeId);
+  const ownerNode = ow ? ALL_NODES.find(n => n.id === ow) : null;
+  let h = `<div class="sync-panel">`;
+  h += `<div class="sync-header"><span class="sh-cmd">Celebrate!</span><span class="sh-badge" style="background:rgba(235,184,48,.15);color:#EBB830">CELEBRATION</span><button class="sync-close" onclick="clearCelebration()">&times;</button></div>`;
+  h += `<div class="sync-label">Achievement Context</div>`;
+  h += `<div style="padding:4px 0"><div style="padding:0 14px 4px;font-size:10px;color:#B5D8EA;display:flex;align-items:center;gap:4px"><span>\ud83c\udfc6</span> Achievement Details</div>`;
+  h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\u2b50</span><span class="si-label">${node ? node.label : nodeId}</span><span class="si-detail">Achievement unlocked</span></div>`;
+  if (ownerNode) h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\ud83d\udc64</span><span class="si-label">${ownerNode.label}</span><span class="si-detail">Achieved by</span></div>`;
+  ALL_NODES.filter(n => n.type === "member" && n.id !== ow).forEach(m => {
+    h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\ud83d\udc6a</span><span class="si-label">${m.label}</span><span class="si-detail">Family member</span></div>`;
+  });
+  h += `</div><button class="sync-exec" onclick="clearCelebration();alert('Celebration shared with the family! \ud83c\udf89')">Share Celebration \ud83c\udf89</button></div>`;
+  document.getElementById("syncPanel").innerHTML = h;
+  scrollToNode(nodeId);
+}
+
+function clearCelebration() {
+  S.syncedIds = null;
+  S.activeCmd = null;
+  document.querySelectorAll(".cmd-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("syncPanel").innerHTML = "";
+}
+
+function insightOfferHelp(docId, memberId) {
+  // Select the document node and sync glow both the doc + the member
+  selectNode(docId);
+  const ids = new Set([docId, memberId]);
+  S.syncedIds = ids;
+  // Show help sync panel
+  const doc = ALL_NODES.find(n => n.id === docId);
+  const mem = ALL_NODES.find(n => n.id === memberId);
+  const viewer = ALL_NODES.find(n => n.id === S.viewerId);
+  let h = `<div class="sync-panel">`;
+  h += `<div class="sync-header"><span class="sh-cmd">Offer Help</span><span class="sh-badge" style="background:rgba(42,110,120,.15);color:#58AAB8">COLLABORATE</span><button class="sync-close" onclick="clearCelebration()">&times;</button></div>`;
+  h += `<div class="sync-label">Task Context</div>`;
+  h += `<div style="padding:4px 0"><div style="padding:0 14px 4px;font-size:10px;color:#B5D8EA;display:flex;align-items:center;gap:4px"><span>\ud83d\udccb</span> Document Details</div>`;
+  if (doc) h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\ud83d\udcc4</span><span class="si-label">${doc.label}</span><span class="si-detail">${doc.docType || "document"}</span></div>`;
+  if (mem) h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\ud83d\udc64</span><span class="si-label">${mem.label}</span><span class="si-detail">Owner</span></div>`;
+  if (viewer) h += `<div class="sync-item"><span class="sync-check on">\u2713</span><span>\ud83e\udd1d</span><span class="si-label">${viewer.label}</span><span class="si-detail">Helper</span></div>`;
+  h += `</div><button class="sync-exec" onclick="clearCelebration();alert('Help offer sent to ${mem ? mem.label : "family member"}! \ud83d\udc4f')">Send Help Offer \ud83e\udd1d</button></div>`;
+  document.getElementById("syncPanel").innerHTML = h;
+  scrollToNode(docId);
+}
+
+function scrollToNode(nodeId) {
+  // Nudge force simulation to gently center on the target node
+  const node = S.nodes.find(n => n.id === nodeId);
+  if (!node || node.x == null) return;
+  // Re-center simulation around the node
+  S.sim.force("center", d3.forceCenter(S.W / 2, S.H / 2).strength(0.3));
+  S.sim.alpha(0.15).restart();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SYNC GLOW (AI COMMAND DEMO)
+// ═══════════════════════════════════════════════════════════════
+const CMD_MAP = {
+  food:{label:"Order Dinner",action:"COOK",priority:"medium",context:"dietary_preferences",
+    filter:n=>n.type==="preference"&&n.category==="food",
+    items:()=>{
+      const items=[];
+      ALL_EDGES.filter(e=>e.relation==="has_preference").forEach(e=>{
+        const mid=e.source.startsWith("m-")?e.source:e.target;
+        const pid=e.source.startsWith("m-")?e.target:e.source;
+        const m=ALL_NODES.find(n=>n.id===mid),p=ALL_NODES.find(n=>n.id===pid);
+        if(m&&p&&p.category==="food")items.push({icon:p.sentiment==="avoids"?"\u274c":"\u2764\ufe0f",label:m.label,detail:`${p.sentiment} ${p.label}`,on:true});
+      });
+      return{title:"Dietary Preferences",sicon:"\ud83c\udf7d\ufe0f",items};
+    }},
+  clean:{label:"Clean Room",action:"CLEAN",priority:"low",context:"devices",
+    filter:n=>n.type==="device",
+    items:()=>{
+      const items=[];
+      ALL_NODES.filter(n=>n.type==="device").forEach(d=>{
+        const ow=findOwner(d.id,ALL_EDGES);const m=ow?ALL_NODES.find(n=>n.id===ow):null;
+        items.push({icon:d.riskLevel==="high"?"\u26a0\ufe0f":"\ud83d\udcf1",label:d.label,detail:m?`${m.label}'s \u00b7 ${d.platform}`:d.platform,on:d.riskLevel!=="high"});
+      });
+      return{title:"Devices",sicon:"\ud83d\udda5\ufe0f",items};
+    }},
+  hike:{label:"Plan Hike",action:"SCHEDULE",priority:"low",context:"activities",
+    filter:n=>n.type==="preference"&&n.category==="activity",
+    items:()=>{
+      const items=[];
+      ALL_EDGES.filter(e=>e.relation==="has_preference").forEach(e=>{
+        const mid=e.source.startsWith("m-")?e.source:e.target;
+        const pid=e.source.startsWith("m-")?e.target:e.source;
+        const m=ALL_NODES.find(n=>n.id===mid),p=ALL_NODES.find(n=>n.id===pid);
+        if(m&&p&&p.category==="activity")items.push({icon:"\ud83c\udfaf",label:m.label,detail:`${p.sentiment} ${p.label}`,on:true});
+      });
+      return{title:"Activity Preferences",sicon:"\ud83c\udfc3",items};
+    }},
+};
+
+function activateCmd(key){
+  const cmd=CMD_MAP[key];if(!cmd)return;
+  // Toggle off
+  if(S.activeCmd===key){
+    S.activeCmd=null;S.syncedIds=null;
+    document.querySelectorAll(".cmd-btn").forEach(b=>b.classList.remove("active"));
+    document.getElementById("syncPanel").innerHTML="";
+    return;
+  }
+  S.activeCmd=key;
+  document.querySelectorAll(".cmd-btn").forEach(b=>b.classList.toggle("active",b.dataset.cmd===key));
+
+  // Compute synced IDs
+  const ids=new Set();
+  S.nodes.filter(cmd.filter).forEach(n=>ids.add(n.id));
+  S.syncedIds=ids.size?ids:null;
+
+  // Render sync panel
+  const info=cmd.items();
+  let h=`<div class="sync-panel">`;
+  h+=`<div class="sync-header"><span class="sh-cmd">${cmd.label}</span><span class="sh-badge" style="background:rgba(162,150,200,.15);color:#BEB5DA">${cmd.action}</span><span class="sh-badge" style="background:rgba(95,125,140,.3);color:#B5D8EA;margin-left:4px">${cmd.priority}</span><button class="sync-close" onclick="activateCmd('${key}')">&times;</button></div>`;
+  h+=`<div class="sync-label">Relevant Context</div>`;
+  h+=`<div style="padding:4px 0"><div style="padding:0 14px 4px;font-size:10px;color:#B5D8EA;display:flex;align-items:center;gap:4px"><span>${info.sicon}</span> ${info.title}</div>`;
+  info.items.forEach(it=>{
+    h+=`<div class="sync-item"><span class="sync-check ${it.on?"on":"off"}">${it.on?"\u2713":"\u26a0"}</span><span>${it.icon}</span><span class="si-label">${it.label}</span><span class="si-detail">${it.detail}</span></div>`;
+  });
+  h+=`</div>`;
+  if(key==="food"){
+    h+=`<button class="sync-exec" style="border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.15);color:#4ade80" onclick="showUberEatsOrder()">Order on Uber Eats \ud83d\udef5</button>`;
+    h+=`<div id="uberEatsOrderSummary"></div>`;
+  }else{
+    h+=`<button class="sync-exec" onclick="alert('Command dispatched: ${cmd.action}')">Execute Command &#9654;</button>`;
+  }
+  h+=`</div>`;
+  document.getElementById("syncPanel").innerHTML=h;
+}
+
+function showUberEatsOrder(){
+  const vf=value_filter(ALL_NODES,ALL_EDGES);
+  const el=document.getElementById("uberEatsOrderSummary");
+  if(!el)return;
+  const members=new Set(vf.restrictions.map(r=>r.memberLabel));
+  let h=`<div style="margin:8px 12px;padding:12px;border-radius:8px;border:1px solid rgba(34,197,94,.2);background:rgba(34,197,94,.04)">`;
+  h+=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px"><span style="font-size:14px">\ud83d\udef5</span><span style="font-size:11px;font-weight:600;color:#4ade80">Uber Eats \u2014 Family Order</span></div>`;
+  h+=`<div style="font-size:10px;color:#71717a;margin-bottom:8px">Party size: ${members.size} members</div>`;
+  vf.restrictions.forEach(r=>{
+    const icon=r.source==="health"?"\ud83c\udfe5":r.sentiment==="avoids"?"\u274c":"\u2764\ufe0f";
+    h+=`<div style="display:flex;align-items:center;gap:6px;font-size:10px;margin-bottom:3px"><span>${icon}</span><span style="color:#d4d4d8">${r.label}</span><span style="color:#52525b">(${r.memberLabel})</span></div>`;
+  });
+  h+=`<div style="margin-top:8px;font-size:10px;color:rgba(74,222,128,.6)">${vf.cpNote}</div>`;
+  h+=`<div style="display:flex;gap:8px;margin-top:10px">`;
+  h+=`<button style="flex:1;padding:6px;border-radius:6px;background:rgba(34,197,94,.2);border:none;color:#4ade80;font-size:10px;font-weight:600;cursor:pointer" onclick="document.getElementById('uberEatsOrderSummary').innerHTML='';alert('\u2705 Uber Eats order initiated \u2014 searching restaurants matching family dietary constraints')">Confirm Order \ud83d\udef5</button>`;
+  h+=`<button style="padding:6px 12px;border-radius:6px;background:transparent;border:none;color:#71717a;font-size:10px;cursor:pointer" onclick="document.getElementById('uberEatsOrderSummary').innerHTML=''">Cancel</button>`;
+  h+=`</div></div>`;
+  el.innerHTML=h;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  NODE DETAIL
+// ═══════════════════════════════════════════════════════════════
+function showDetail(node){
+  const sec=document.getElementById("detailSection");
+  const el=document.getElementById("detailContent");
+  const isOwner=node.type==="member"||ownerOf(node.id)===S.viewerId;
+  const vn=ALL_NODES.find(n=>n.id===S.viewerId);
+  const vIsParent=vn&&vn.role==="parent";
+  const isMasked=node.riskLevel==="high"&&!isOwner&&!vIsParent;
+  const isPriv=!isOwner&&!isMasked&&(node.visibility==="private"||node.visibility==="guarded");
+
+  let h=`<button class="detail-close" onclick="selectNode(null)">&times;</button>`;
+  if(isMasked){
+    h+=`<div class="detail-name" style="color:${RISK_HIGH}">\u26a0 System Alert</div>`;
+    h+=`<div class="detail-type" style="color:${RISK_HIGH}">High-Risk &middot; ${node.type}</div>`;
+    h+=`<div class="detail-prop" style="color:#7A9AAB">Content restricted. Switch to the owner's session to view.</div>`;
+  }else if(isPriv){
+    h+=`<div class="detail-name" style="color:#7A9AAB">\ud83d\udd12 Private</div>`;
+    h+=`<div class="detail-type" style="color:#7A9AAB">${node.type}</div>`;
+    h+=`<div class="detail-prop" style="color:#4A6E80;filter:blur(4px)">Content protected. Session not active.</div>`;
+  }else{
+    h+=`<div class="detail-name">${node.label}</div>`;
+    h+=`<div class="detail-type" style="color:${NODE_COLORS[node.type]}">${node.type}</div>`;
+    const props=[];
+    if(node.role)props.push(["Role",node.role]);
+    if(node.age)props.push(["Age",node.age]);
+    if(node.category)props.push(["Category",node.category]);
+    if(node.sentiment)props.push(["Sentiment",node.sentiment]);
+    if(node.platform)props.push(["Platform",node.platform]);
+    if(node.os)props.push(["OS",node.os]);
+    if(node.docType)props.push(["Type",node.docType]);
+    if(node.trigger)props.push(["Trigger",node.trigger]);
+    if(node.condition)props.push(["Condition",node.condition]);
+    if(node.action)props.push(["Action",node.action]);
+    if(node.severity)props.push(["Severity",node.severity]);
+    if(node.healthTags&&node.healthTags.length)props.push(["Health Tags",node.healthTags.join(", ")]);
+    if(node.adminLevel)props.push(["Admin Level",node.adminLevel]);
+    if(node.riskLevel)props.push(["Risk",node.riskLevel]);
+    if(node.visibility)props.push(["Visibility",node.visibility]);
+    if(node.isAchievement)props.push(["Achievement","\u2b50 Yes"]);
+    props.forEach(([k,v])=>{h+=`<div class="detail-prop">${k}: <span>${v}</span></div>`});
+  }
+  el.innerHTML=h;
+  sec.classList.remove("collapsed");
+  sec.style.maxHeight="50%";
+}
+
+function hideDetail(){
+  const sec=document.getElementById("detailSection");
+  sec.classList.add("collapsed");
+}
+
+function selectNode(id){
+  if(S.selectedId===id)id=null;
+  S.selectedId=id;
+  updateHighlights();
+  updateLivoPanel();
+  if(id){
+    const node=S.nodes.find(n=>n.id===id);
+    if(node)showDetail(node);
+  }else hideDetail();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INTERACTION
+// ═══════════════════════════════════════════════════════════════
+function findNodeAt(mx,my){
+  for(let i=S.nodes.length-1;i>=0;i--){
+    const n=S.nodes[i];if(n.x==null)continue;
+    const r=(NODE_RADIUS[n.type]||5)*DEPTH_SCALE[depthOf(n)]+4;
+    if(Math.hypot(mx-n.x,my-n.y)<r)return n;
+  }
+  return null;
+}
+
+canvas.addEventListener("click",e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const node=findNodeAt(mx,my);
+  selectNode(node?node.id:null);
+});
+
+canvas.addEventListener("mousemove",e=>{
+  const rect=canvas.getBoundingClientRect();
+  const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  const node=findNodeAt(mx,my);
+  const tt=document.getElementById("tooltip");
+  if(node){
+    canvas.style.cursor="pointer";
+    const isOwner=node.type==="member"||ownerOf(node.id)===S.viewerId;
+    const masked=node.riskLevel==="high"&&!isOwner;
+    const label=masked?"\u26a0 System Alert":node.label;
+    const layer=LAYER_NAMES[depthOf(node)];
+    let badges="";
+    if(node.riskLevel==="high")badges+=`<div class="tt-badge" style="color:#E25860">\u25cf High Risk</div>`;
+    if(node.isAchievement)badges+=`<div class="tt-badge" style="color:#EBB830">\u2605 Achievement</div>`;
+    tt.innerHTML=`<div class="tt-name">${label}</div><div class="tt-type" style="color:${NODE_COLORS[node.type]}">${node.type} &middot; <span class="tt-layer">${layer}</span></div>${badges}`;
+    tt.style.left=Math.min(e.clientX-rect.left+12,S.W-230)+"px";
+    tt.style.top=(e.clientY-rect.top-10)+"px";
+    tt.classList.add("visible");
+  }else{
+    canvas.style.cursor="default";
+    tt.classList.remove("visible");
+  }
+});
+
+canvas.addEventListener("mouseleave",()=>{document.getElementById("tooltip").classList.remove("visible")});
+
+// Drag nodes
+canvas.addEventListener("mousedown",e=>{
+  const rect=canvas.getBoundingClientRect();
+  const node=findNodeAt(e.clientX-rect.left,e.clientY-rect.top);
+  if(node){S.drag=node;S.sim.alphaTarget(0.3).restart()}
+});
+window.addEventListener("mousemove",e=>{
+  if(!S.drag)return;
+  const rect=canvas.getBoundingClientRect();
+  S.drag.fx=e.clientX-rect.left;S.drag.fy=e.clientY-rect.top;
+});
+window.addEventListener("mouseup",()=>{
+  if(S.drag){S.drag.fx=null;S.drag.fy=null;S.drag=null;S.sim.alphaTarget(0)}
+});
+
+// Settings handlers
+document.getElementById("viewerSelect").addEventListener("change",e=>{S.viewerId=e.target.value;rebuildGraph()});
+["member","preference","device","document","health","house_rule"].forEach(t=>{
+  document.getElementById("t-"+t).addEventListener("change",e=>{S.visibleTypes[t]=e.target.checked;rebuildGraph()});
+});
+
+// Command buttons
+document.querySelectorAll(".cmd-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>activateCmd(btn.dataset.cmd));
+});
+
+// Resize
+window.addEventListener("resize",()=>{resize();if(S.sim)S.sim.force("center",d3.forceCenter(S.W/2,S.H/2))});
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+resize();
+rebuildGraph();
+requestAnimationFrame(render);
+animateLivoSphere();
+animateLivoFabSphere();
+updateFabVisibility();
+</script>
+</body>
+</html>

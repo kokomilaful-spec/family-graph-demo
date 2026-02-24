@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    { "id": "m-dad", "type": "member", "label": "Dad", "role": "parent", "gender": "male", "age": 42, "riskLevel": "low", "visibility": "family" },
+    { "id": "m-mom", "type": "member", "label": "Mom", "role": "parent", "gender": "female", "age": 40, "riskLevel": "low", "visibility": "family", "healthTags": ["Lactose Intolerant"] },
+    { "id": "m-daughter", "type": "member", "label": "Daughter", "role": "child", "gender": "female", "age": 12, "riskLevel": "low", "visibility": "family" },
+    { "id": "m-son", "type": "member", "label": "Son", "role": "child", "gender": "male", "age": 8, "riskLevel": "low", "visibility": "family" },
+    { "id": "m-grandpa", "type": "member", "label": "Grandpa", "role": "grandparent", "gender": "male", "age": 72, "riskLevel": "low", "visibility": "family" },
+    { "id": "m-grandma", "type": "member", "label": "Grandma", "role": "grandparent", "gender": "female", "age": 68, "riskLevel": "low", "visibility": "family", "healthTags": ["Diabetes", "Low-Salt Diet"] },
+    { "id": "m-caregiver", "type": "member", "label": "Foreign Caregiver", "role": "caregiver", "gender": "female", "age": 35, "riskLevel": "low", "visibility": "family", "adminLevel": "secondary" },
+
+    { "id": "p-no-meat", "type": "preference", "label": "No Meat", "category": "food", "sentiment": "avoids", "riskLevel": "low", "visibility": "family" },
+    { "id": "p-loves-soup", "type": "preference", "label": "Soup", "category": "food", "sentiment": "loves", "riskLevel": "low", "visibility": "family" },
+    { "id": "p-loves-hiking", "type": "preference", "label": "Hiking", "category": "activity", "sentiment": "likes", "riskLevel": "low", "visibility": "family" },
+    { "id": "p-loves-baking", "type": "preference", "label": "Baking", "category": "activity", "sentiment": "loves", "riskLevel": "low", "visibility": "family" },
+    { "id": "p-morning-walk", "type": "preference", "label": "Morning Walk", "category": "activity", "sentiment": "loves", "riskLevel": "low", "visibility": "family" },
+    { "id": "p-chinese-chess", "type": "preference", "label": "Chinese Chess", "category": "activity", "sentiment": "loves", "riskLevel": "low", "visibility": "family" },
+
+    { "id": "h-diabetes", "type": "health", "label": "Diabetes", "condition": "Type 2 Diabetes", "severity": "moderate", "riskLevel": "medium", "visibility": "health_only" },
+    { "id": "h-low-salt", "type": "health", "label": "Low-Salt Diet", "condition": "Dietary restriction due to hypertension risk", "severity": "low", "riskLevel": "low", "visibility": "health_only" },
+    { "id": "h-lactose", "type": "health", "label": "Lactose Intolerant", "condition": "Cannot digest dairy products", "severity": "moderate", "riskLevel": "low", "visibility": "health_only" },
+
+    { "id": "d-ipad", "type": "device", "label": "iPad", "platform": "Apple", "os": "iPadOS", "riskLevel": "low", "visibility": "family" },
+    { "id": "d-laptop", "type": "device", "label": "Laptop", "platform": "Apple", "os": "macOS", "riskLevel": "low", "visibility": "family" },
+
+    { "id": "doc-grocery", "type": "document", "label": "Weekly Grocery List", "docType": "list", "riskLevel": "low", "visibility": "family" },
+    { "id": "doc-soup-recipe", "type": "document", "label": "Grandma's Soup Recipe", "docType": "recipe", "riskLevel": "low", "visibility": "family" },
+    { "id": "doc-family-budget", "type": "document", "label": "Family Budget", "docType": "financial", "riskLevel": "low", "visibility": "guarded" },
+
+    { "id": "d-suspicious-app", "type": "device", "label": "Suspicious App", "platform": "Unknown", "os": "Android", "riskLevel": "high", "visibility": "private" },
+    { "id": "doc-vibe-coding", "type": "document", "label": "Vibe Coding Project", "docType": "project", "riskLevel": "low", "visibility": "family", "isAchievement": true },
+    { "id": "doc-private-chat", "type": "document", "label": "Private Chat", "docType": "note", "riskLevel": "low", "visibility": "private" },
+
+    { "id": "r-tech-free", "type": "house_rule", "label": "Tech-Free After 10PM", "trigger": "time", "condition": "after 10:00 PM", "action": "disable device access", "riskLevel": "low", "visibility": "family" },
+
+    { "id": "doc-gold-fund", "type": "document", "label": "15% Gold Fund", "docType": "financial", "riskLevel": "high", "visibility": "guarded" }
+  ],
+  "edges": [
+    { "id": "e1", "source": "m-dad", "target": "m-mom", "relation": "spouse_of", "weight": 5 },
+    { "id": "e2", "source": "m-dad", "target": "m-daughter", "relation": "parent_of", "weight": 4 },
+    { "id": "e3", "source": "m-dad", "target": "m-son", "relation": "parent_of", "weight": 3 },
+    { "id": "e4", "source": "m-mom", "target": "m-daughter", "relation": "parent_of", "weight": 5 },
+    { "id": "e5", "source": "m-mom", "target": "m-son", "relation": "parent_of", "weight": 4 },
+    { "id": "e6", "source": "m-daughter", "target": "m-son", "relation": "sibling_of", "weight": 3 },
+
+    { "id": "e20", "source": "m-grandpa", "target": "m-grandma", "relation": "spouse_of", "weight": 5 },
+    { "id": "e21", "source": "m-grandpa", "target": "m-dad", "relation": "parent_of", "weight": 4 },
+    { "id": "e22", "source": "m-grandpa", "target": "m-daughter", "relation": "grandparent_of", "weight": 3 },
+    { "id": "e23", "source": "m-grandpa", "target": "m-son", "relation": "grandparent_of", "weight": 3 },
+    { "id": "e24", "source": "m-grandma", "target": "m-dad", "relation": "parent_of", "weight": 4 },
+    { "id": "e25", "source": "m-grandma", "target": "m-daughter", "relation": "grandparent_of", "weight": 4 },
+    { "id": "e26", "source": "m-grandma", "target": "m-son", "relation": "grandparent_of", "weight": 3 },
+    { "id": "e27", "source": "m-grandma", "target": "doc-soup-recipe", "relation": "authored", "label": "Grandma's recipe" },
+
+    { "id": "e28", "source": "m-grandma", "target": "h-diabetes", "relation": "has_health_condition", "label": "Grandma has diabetes" },
+    { "id": "e29", "source": "m-grandma", "target": "h-low-salt", "relation": "has_health_condition", "label": "Grandma needs low-salt diet" },
+
+    { "id": "e36", "source": "m-mom", "target": "h-lactose", "relation": "has_health_condition", "label": "Mom is lactose intolerant" },
+
+    { "id": "e30", "source": "m-caregiver", "target": "m-grandma", "relation": "caregiver_of", "label": "Caregiver for Grandma", "weight": 4 },
+    { "id": "e31", "source": "m-grandpa", "target": "p-morning-walk", "relation": "has_preference", "label": "Grandpa loves morning walks" },
+    { "id": "e32", "source": "m-grandpa", "target": "p-chinese-chess", "relation": "has_preference", "label": "Grandpa loves Chinese Chess" },
+
+    { "id": "e33", "source": "m-dad", "target": "doc-family-budget", "relation": "authored", "label": "Dad manages family budget" },
+
+    { "id": "e7", "source": "m-daughter", "target": "p-no-meat", "relation": "has_preference", "label": "Daughter avoids meat" },
+    { "id": "e8", "source": "m-son", "target": "p-loves-soup", "relation": "has_preference", "label": "Son loves soup" },
+    { "id": "e9", "source": "m-dad", "target": "p-loves-hiking", "relation": "has_preference", "label": "Dad likes hiking" },
+    { "id": "e10", "source": "m-mom", "target": "p-loves-baking", "relation": "has_preference", "label": "Mom loves baking" },
+
+    { "id": "e11", "source": "m-daughter", "target": "d-ipad", "relation": "owns_device" },
+    { "id": "e12", "source": "m-dad", "target": "d-laptop", "relation": "owns_device" },
+
+    { "id": "e13", "source": "m-mom", "target": "doc-grocery", "relation": "authored" },
+    { "id": "e14", "source": "doc-soup-recipe", "target": "p-loves-soup", "relation": "related_to", "label": "Recipe for Son's favorite" },
+
+    { "id": "e15", "source": "d-suspicious-app", "target": "d-ipad", "relation": "installed_on", "label": "Installed on Daughter's iPad" },
+    { "id": "e16", "source": "m-daughter", "target": "d-suspicious-app", "relation": "owns_device", "label": "Daughter installed this app" },
+    { "id": "e17", "source": "m-daughter", "target": "doc-vibe-coding", "relation": "created_by", "label": "Daughter's coding project" },
+    { "id": "e18", "source": "m-daughter", "target": "doc-private-chat", "relation": "authored", "label": "Daughter's private chat" },
+
+    { "id": "e19", "source": "r-tech-free", "target": "d-ipad", "relation": "applies_to", "label": "Rule applies to iPad" },
+
+    { "id": "e35", "source": "m-grandma", "target": "doc-gold-fund", "relation": "authored", "label": "Grandma researching gold fund" }
+  ],
+  "synapseEvents": [
+    { "id": "se-1", "description": "Family hiked together at Yangmingshan", "impact": "Positive", "intensity": 4, "involvedMembers": ["m-dad", "m-mom", "m-daughter", "m-son"], "timestamp": "2026-02-22T10:00:00Z" },
+    { "id": "se-2", "description": "Suspicious app detected on Daughter's iPad", "impact": "Negative", "intensity": 5, "involvedMembers": ["m-daughter", "m-dad"], "timestamp": "2026-02-20T21:30:00Z" },
+    { "id": "se-3", "description": "Son and Mom cooked Grandma's soup recipe", "impact": "Positive", "intensity": 3, "involvedMembers": ["m-son", "m-mom"], "timestamp": "2026-02-21T17:00:00Z" },
+    { "id": "se-4", "description": "Daughter completed Vibe Coding Project milestone", "impact": "Positive", "intensity": 5, "involvedMembers": ["m-daughter"], "timestamp": "2026-02-19T15:00:00Z" },
+    { "id": "se-5", "description": "Tech-Free rule triggered but was ignored", "impact": "Negative", "intensity": 2, "involvedMembers": ["m-daughter", "m-son"], "timestamp": "2026-02-23T22:15:00Z" },
+    { "id": "se-6", "description": "Dad updated the weekly grocery list", "impact": "Neutral", "intensity": 1, "involvedMembers": ["m-dad"], "timestamp": "2026-02-24T09:00:00Z" },
+    { "id": "se-7", "description": "Mom and Daughter baked cookies together", "impact": "Positive", "intensity": 4, "involvedMembers": ["m-mom", "m-daughter"], "timestamp": "2026-02-23T14:00:00Z" },
+    { "id": "se-8", "description": "Grandma researching a 15% gold fund with unverified credentials", "impact": "Negative", "intensity": 4, "involvedMembers": ["m-grandma", "m-dad"], "timestamp": "2026-02-24T11:00:00Z" }
+  ]
+}
