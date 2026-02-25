@@ -19,6 +19,7 @@ import { useCelebration } from "@/components/CelebrationEffect";
 import WeeklyTrustReceipt from "@/components/WeeklyTrustReceipt";
 import { handle_high_risk_event } from "@/lib/livo/high-risk-handler";
 import { livo_mediator } from "@/lib/livo/mediator";
+import OnboardingTour from "@/components/OnboardingTour";
 import mockData from "@/data/family-mock.json";
 
 export default function Home() {
@@ -306,10 +307,32 @@ export default function Home() {
           </div>
 
           {/* Toggle: Family Insights / Weekly Trust Receipt */}
-          <div className="flex shrink-0 border-b border-white/[0.06]">
+          <div
+            role="tablist"
+            aria-label="Right panel tabs"
+            className="flex shrink-0 border-b border-white/[0.06]"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                e.preventDefault();
+                setShowReceipt((prev) => !prev);
+                // Move focus to the other tab
+                const target = e.currentTarget.querySelector<HTMLButtonElement>(
+                  `[aria-selected="${e.key === "ArrowRight" ? !showReceipt : showReceipt ? "true" : "false"}"]`
+                );
+                // Simpler: just toggle and focus sibling
+                const sibling = (e.target as HTMLElement).nextElementSibling ?? (e.target as HTMLElement).previousElementSibling;
+                (sibling as HTMLElement)?.focus();
+              }
+            }}
+          >
             <button
+              role="tab"
+              aria-selected={!showReceipt}
+              aria-controls="panel-insights"
+              id="tab-insights"
+              tabIndex={!showReceipt ? 0 : -1}
               onClick={() => setShowReceipt(false)}
-              className={`flex-1 px-3 py-1.5 text-[10px] font-medium transition-colors ${
+              className={`flex-1 px-3 py-1.5 text-xs font-medium transition-colors ${
                 !showReceipt
                   ? "border-b-2 border-indigo-500 text-indigo-400"
                   : "text-zinc-600 hover:text-zinc-400"
@@ -318,8 +341,13 @@ export default function Home() {
               Insights
             </button>
             <button
+              role="tab"
+              aria-selected={showReceipt}
+              aria-controls="panel-receipt"
+              id="tab-receipt"
+              tabIndex={showReceipt ? 0 : -1}
               onClick={() => setShowReceipt(true)}
-              className={`flex-1 px-3 py-1.5 text-[10px] font-medium transition-colors ${
+              className={`flex-1 px-3 py-1.5 text-xs font-medium transition-colors ${
                 showReceipt
                   ? "border-b-2 border-emerald-500 text-emerald-400"
                   : "text-zinc-600 hover:text-zinc-400"
@@ -329,7 +357,12 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          <div
+            role="tabpanel"
+            id={showReceipt ? "panel-receipt" : "panel-insights"}
+            aria-labelledby={showReceipt ? "tab-receipt" : "tab-insights"}
+            className="min-h-0 flex-1 overflow-y-auto"
+          >
             {showReceipt ? (
               <WeeklyTrustReceipt
                 highRiskAlert={highRiskAlert}
@@ -371,6 +404,9 @@ export default function Home() {
         highRiskAlert={highRiskAlert}
         mediatorAlert={mediatorAlert}
       />
+
+      {/* First-run onboarding tooltip tour */}
+      <OnboardingTour />
     </div>
   );
 }

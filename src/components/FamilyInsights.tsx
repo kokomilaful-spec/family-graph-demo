@@ -124,15 +124,15 @@ function CompactInsightCard({ insight, style }: { insight: Insight; style: Categ
     <div
       className={`group flex items-start gap-2 rounded-lg border ${style.border} ${style.bg} px-3 py-2 transition-colors`}
     >
-      <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded text-[11px] ${style.iconBg}`}>
+      <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded text-[13px] ${style.iconBg}`}>
         {insight.icon}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] leading-snug text-zinc-300">
+        <p className="text-[13px] leading-snug text-zinc-300">
           {insight.message}
         </p>
         {insight.timestamp && (
-          <p className="mt-0.5 text-[9px] text-zinc-600">
+          <p className="mt-0.5 text-[11px] text-zinc-600">
             {formatRelativeTime(insight.timestamp)}
           </p>
         )}
@@ -140,7 +140,7 @@ function CompactInsightCard({ insight, style }: { insight: Insight; style: Categ
       <button
         onClick={insight.onAction}
         title={insight.actionLabel}
-        className={`shrink-0 rounded-md px-2 py-0.5 text-[10px] font-medium opacity-60 transition-opacity group-hover:opacity-100 ${style.actionText} ${style.actionHover}`}
+        className={`shrink-0 rounded-md px-2 py-0.5 text-xs font-medium opacity-60 transition-opacity group-hover:opacity-100 ${style.actionText} ${style.actionHover}`}
       >
         {insight.actionLabel}
       </button>
@@ -170,10 +170,10 @@ function CollapsibleSection({
         className={`flex items-center gap-2 rounded-lg border ${style.border} ${style.bg} px-3 py-2 transition-colors hover:brightness-125`}
       >
         <span className="text-sm">{meta.icon}</span>
-        <span className={`text-[11px] font-semibold uppercase tracking-wider ${style.headerText}`}>
+        <span className={`text-[13px] font-semibold uppercase tracking-wider ${style.headerText}`}>
           {meta.label}
         </span>
-        <span className={`text-[10px] ${style.headerText} opacity-60`}>
+        <span className={`text-xs ${style.headerText} opacity-60`}>
           ({items.length})
         </span>
         <svg
@@ -685,15 +685,15 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
             />
           </svg>
         </div>
-        <span className="text-sm font-semibold text-zinc-200">Family Insights</span>
-        <span className="ml-auto rounded-full bg-indigo-500/15 px-1.5 py-0.5 text-[10px] font-medium text-indigo-400">
-          Livo
+        <span className="text-base font-semibold text-zinc-200">Family Insights</span>
+        <span className="ml-auto rounded-full bg-indigo-500/15 px-1.5 py-0.5 text-xs font-medium text-indigo-400">
+          TrendLife
         </span>
       </div>
 
       {/* Viewer context */}
       <div className="border-b border-white/[0.06] px-4 py-2">
-        <p className="text-[10px] text-zinc-600">
+        <p className="text-xs text-zinc-600">
           Suggestions for{" "}
           <span className="font-medium text-zinc-400">{viewerLabel}</span>
           {" \u00b7 "}
@@ -706,24 +706,24 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
         <div className="border-b border-indigo-500/20 bg-indigo-500/[0.03]">
           {/* Command summary bar */}
           <div className="flex items-center gap-2 border-b border-indigo-500/10 px-4 py-2.5">
-            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-indigo-500/15 text-[10px] text-indigo-400">
+            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-indigo-500/15 text-xs text-indigo-400">
               <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3" />
               </svg>
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-zinc-200">
+              <p className="truncate text-sm font-medium text-zinc-200">
                 {activeCommand.summary}
               </p>
               <div className="mt-0.5 flex items-center gap-1.5">
-                <span className="rounded bg-indigo-500/15 px-1.5 py-0.5 text-[9px] font-medium text-indigo-400">
+                <span className="rounded bg-indigo-500/15 px-1.5 py-0.5 text-[11px] font-medium text-indigo-400">
                   {activeCommand.action}
                 </span>
-                <span className={`rounded px-1.5 py-0.5 text-[9px] font-medium ${PRIORITY_COLORS[activeCommand.priority]}`}>
+                <span className={`rounded px-1.5 py-0.5 text-[11px] font-medium ${PRIORITY_COLORS[activeCommand.priority]}`}>
                   {activeCommand.priority}
                 </span>
                 {activeCommand.location !== "unknown" && (
-                  <span className="rounded bg-zinc-700/50 px-1.5 py-0.5 text-[9px] text-zinc-400">
+                  <span className="rounded bg-zinc-700/50 px-1.5 py-0.5 text-[11px] text-zinc-400">
                     {activeCommand.location.replace(/_/g, " ")}
                   </span>
                 )}
@@ -741,7 +741,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
 
           {/* Relevant Context header */}
           <div className="px-4 pt-2.5 pb-1">
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-indigo-400/70">
+            <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400/70">
               Relevant Context
             </p>
           </div>
@@ -752,7 +752,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
               <div key={section.type} className="mt-2">
                 <div className="mb-1.5 flex items-center gap-1.5 px-1">
                   <span className="text-xs">{section.icon}</span>
-                  <span className="text-[10px] font-medium text-zinc-400">
+                  <span className="text-xs font-medium text-zinc-400">
                     {section.title}
                   </span>
                 </div>
@@ -784,8 +784,8 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                       <span className="text-xs">{item.icon}</span>
                       {/* Label + detail */}
                       <div className="min-w-0 flex-1">
-                        <span className="text-xs text-zinc-300">{item.label}</span>
-                        <span className="ml-1.5 text-[10px] text-zinc-600">{item.detail}</span>
+                        <span className="text-sm text-zinc-300">{item.label}</span>
+                        <span className="ml-1.5 text-xs text-zinc-600">{item.detail}</span>
                       </div>
                     </div>
                   ))}
@@ -800,13 +800,13 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
               const vf = value_filter(data.nodes as FamilyNode[], data.edges as Edge[]);
               return vf.restrictions.length > 0 ? (
                 <div className="mx-3 mb-2 rounded-lg border border-emerald-500/15 bg-emerald-500/[0.04] px-3 py-2">
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-emerald-400/70">
+                  <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-emerald-400/70">
                     Food Agent Instruction
                   </p>
-                  <p className="whitespace-pre-line text-[11px] leading-relaxed text-zinc-300">
+                  <p className="whitespace-pre-line text-[13px] leading-relaxed text-zinc-300">
                     {vf.instruction}
                   </p>
-                  <p className="mt-1.5 text-[10px] text-emerald-400/60">
+                  <p className="mt-1.5 text-xs text-emerald-400/60">
                     {vf.cpNote}
                   </p>
                 </div>
@@ -822,7 +822,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                     const vf = value_filter(data.nodes as FamilyNode[], data.edges as Edge[]);
                     setOrderPreview(vf);
                   }}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-green-500/30 bg-green-500/15 px-3 py-2 text-xs font-medium text-green-400 transition-colors hover:bg-green-500/25"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-green-500/30 bg-green-500/15 px-3 py-2 text-sm font-medium text-green-400 transition-colors hover:bg-green-500/25"
                 >
                   Order on Uber Eats
                   <span className="text-sm">🛵</span>
@@ -833,16 +833,16 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                   <div className="mt-2 rounded-lg border border-green-500/20 bg-green-500/[0.04] p-3">
                     <div className="mb-2 flex items-center gap-2">
                       <span className="text-sm">🛵</span>
-                      <span className="text-[11px] font-semibold text-green-400">Uber Eats — Family Order</span>
+                      <span className="text-[13px] font-semibold text-green-400">Uber Eats — Family Order</span>
                     </div>
 
-                    <p className="mb-2 text-[10px] text-zinc-500">
+                    <p className="mb-2 text-xs text-zinc-500">
                       Party size: {new Set(orderPreview.restrictions.map((r) => r.memberLabel)).size} members
                     </p>
 
                     <div className="flex flex-col gap-1">
                       {orderPreview.restrictions.map((r, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                        <div key={i} className="flex items-center gap-1.5 text-xs">
                           <span>{r.source === "health" ? "\ud83c\udfe5" : r.sentiment === "avoids" ? "\u274c" : "\u2764\ufe0f"}</span>
                           <span className="text-zinc-300">{r.label}</span>
                           <span className="text-zinc-600">({r.memberLabel})</span>
@@ -850,7 +850,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                       ))}
                     </div>
 
-                    <p className="mt-2 text-[10px] text-green-400/60">{orderPreview.cpNote}</p>
+                    <p className="mt-2 text-xs text-green-400/60">{orderPreview.cpNote}</p>
 
                     <div className="mt-2.5 flex gap-2">
                       <button
@@ -859,13 +859,13 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                           setOrderPreview(null);
                           alert(`✅ ${result.message}`);
                         }}
-                        className="flex-1 rounded-md bg-green-500/20 py-1.5 text-[10px] font-medium text-green-400 transition-colors hover:bg-green-500/30"
+                        className="flex-1 rounded-md bg-green-500/20 py-1.5 text-xs font-medium text-green-400 transition-colors hover:bg-green-500/30"
                       >
                         Confirm Order 🛵
                       </button>
                       <button
                         onClick={() => setOrderPreview(null)}
-                        className="rounded-md px-3 py-1.5 text-[10px] text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-400"
+                        className="rounded-md px-3 py-1.5 text-xs text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-400"
                       >
                         Cancel
                       </button>
@@ -883,7 +883,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
                       : `${result.message}`,
                   );
                 }}
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/15 px-3 py-2 text-xs font-medium text-indigo-400 transition-colors hover:bg-indigo-500/25"
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-indigo-500/30 bg-indigo-500/15 px-3 py-2 text-sm font-medium text-indigo-400 transition-colors hover:bg-indigo-500/25"
               >
                 Execute Command
                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -895,72 +895,74 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
         </div>
       )}
 
-      {/* Insight cards — grouped by category with collapsible sections */}
-      <div className="flex-1 overflow-y-auto px-3 py-3">
-        <div className="flex flex-col gap-2.5">
-          {/* Reward cards (always at top) */}
-          {rewardCards?.map((reward) => (
-            <LivoRewardCard
-              key={reward.eventId}
-              reward={reward}
-              onCelebrate={() => onTriggerCelebration?.(reward.eventId)}
-              onDismiss={() => onDismissReward?.(reward.eventId)}
+      {/* Insight cards — hidden when order preview is active */}
+      {!orderPreview && (
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          <div className="flex flex-col gap-2.5">
+            {/* Reward cards (always at top) */}
+            {rewardCards?.map((reward) => (
+              <LivoRewardCard
+                key={reward.eventId}
+                reward={reward}
+                onCelebrate={() => onTriggerCelebration?.(reward.eventId)}
+                onDismiss={() => onDismissReward?.(reward.eventId)}
+              />
+            ))}
+
+            {/* Safety — always expanded */}
+            {groupedInsights.safety.length > 0 && (
+              <div className="flex flex-col gap-1.5">
+                <div className={`flex items-center gap-2 rounded-lg border ${CATEGORY_STYLES.safety.border} ${CATEGORY_STYLES.safety.bg} px-3 py-2`}>
+                  <span className="text-sm">{CATEGORY_META.safety.icon}</span>
+                  <span className={`text-[13px] font-semibold uppercase tracking-wider ${CATEGORY_STYLES.safety.headerText}`}>
+                    {CATEGORY_META.safety.label}
+                  </span>
+                  <span className={`text-xs ${CATEGORY_STYLES.safety.headerText} opacity-60`}>
+                    ({groupedInsights.safety.length})
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1 pl-1">
+                  {groupedInsights.safety.map((ins) => (
+                    <CompactInsightCard key={ins.id} insight={ins} style={CATEGORY_STYLES.safety} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Celebration — expanded by default */}
+            <CollapsibleSection
+              category="celebration"
+              items={groupedInsights.celebration}
+              isCollapsed={collapsedCategories.has("celebration")}
+              onToggle={() => toggleCategory("celebration")}
             />
-          ))}
 
-          {/* Safety — always expanded */}
-          {groupedInsights.safety.length > 0 && (
-            <div className="flex flex-col gap-1.5">
-              <div className={`flex items-center gap-2 rounded-lg border ${CATEGORY_STYLES.safety.border} ${CATEGORY_STYLES.safety.bg} px-3 py-2`}>
-                <span className="text-sm">{CATEGORY_META.safety.icon}</span>
-                <span className={`text-[11px] font-semibold uppercase tracking-wider ${CATEGORY_STYLES.safety.headerText}`}>
-                  {CATEGORY_META.safety.label}
-                </span>
-                <span className={`text-[10px] ${CATEGORY_STYLES.safety.headerText} opacity-60`}>
-                  ({groupedInsights.safety.length})
-                </span>
+            {/* Suggestion — collapsed by default */}
+            <CollapsibleSection
+              category="suggestion"
+              items={groupedInsights.suggestion}
+              isCollapsed={collapsedCategories.has("suggestion")}
+              onToggle={() => toggleCategory("suggestion")}
+            />
+
+            {/* Reminder — collapsed by default */}
+            <CollapsibleSection
+              category="reminder"
+              items={groupedInsights.reminder}
+              isCollapsed={collapsedCategories.has("reminder")}
+              onToggle={() => toggleCategory("reminder")}
+            />
+
+            {/* Empty state */}
+            {deduplicatedInsights.length === 0 && !rewardCards?.length && (
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <p className="text-sm text-zinc-500">No insights at the moment</p>
+                <p className="mt-1 text-xs text-zinc-600">Family is doing great!</p>
               </div>
-              <div className="flex flex-col gap-1 pl-1">
-                {groupedInsights.safety.map((ins) => (
-                  <CompactInsightCard key={ins.id} insight={ins} style={CATEGORY_STYLES.safety} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Celebration — expanded by default */}
-          <CollapsibleSection
-            category="celebration"
-            items={groupedInsights.celebration}
-            isCollapsed={collapsedCategories.has("celebration")}
-            onToggle={() => toggleCategory("celebration")}
-          />
-
-          {/* Suggestion — collapsed by default */}
-          <CollapsibleSection
-            category="suggestion"
-            items={groupedInsights.suggestion}
-            isCollapsed={collapsedCategories.has("suggestion")}
-            onToggle={() => toggleCategory("suggestion")}
-          />
-
-          {/* Reminder — collapsed by default */}
-          <CollapsibleSection
-            category="reminder"
-            items={groupedInsights.reminder}
-            isCollapsed={collapsedCategories.has("reminder")}
-            onToggle={() => toggleCategory("reminder")}
-          />
-
-          {/* Empty state */}
-          {deduplicatedInsights.length === 0 && !rewardCards?.length && (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <p className="text-xs text-zinc-500">No insights at the moment</p>
-              <p className="mt-1 text-[10px] text-zinc-600">Family is doing great!</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

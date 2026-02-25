@@ -78,17 +78,17 @@ export default function PrivacyNode({
             </span>
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-zinc-100">
+            <h2 className="text-base font-semibold text-zinc-100">
               {isOwner ? node.label : `${visLabel} Node`}
             </h2>
             <div className="mt-0.5 flex items-center gap-1.5">
               <span
-                className="inline-block rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
+                className="inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize"
                 style={{ backgroundColor: `${color}20`, color }}
               >
                 {node.type}
               </span>
-              <span className="inline-block rounded-full bg-zinc-700/50 px-2 py-0.5 text-[10px] font-medium text-zinc-400">
+              <span className="inline-block rounded-full bg-zinc-700/50 px-2 py-0.5 text-xs font-medium text-zinc-400">
                 {visLabel}
               </span>
             </div>
@@ -118,7 +118,7 @@ export default function PrivacyNode({
               isOwner ? "animate-pulse bg-emerald-400" : "bg-zinc-600"
             }`}
           />
-          <span className={`text-xs font-medium ${isOwner ? "text-emerald-400" : "text-zinc-500"}`}>
+          <span className={`text-sm font-medium ${isOwner ? "text-emerald-400" : "text-zinc-500"}`}>
             {isOwner ? "Owner Session Active" : "Owner Session Inactive"}
           </span>
         </div>
@@ -133,26 +133,26 @@ export default function PrivacyNode({
           }`}
           aria-hidden={!isOwner}
         >
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+          <p className="mb-2 text-[13px] font-semibold uppercase tracking-widest text-zinc-500">
             Properties
           </p>
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-500">Type</span>
-              <span className="rounded px-2 py-0.5 text-xs capitalize text-zinc-300">{node.type}</span>
+              <span className="text-sm text-zinc-500">Type</span>
+              <span className="rounded px-2 py-0.5 text-smcapitalize text-zinc-300">{node.type}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-500">ID</span>
-              <span className="rounded px-2 py-0.5 text-xs text-zinc-300">{node.id}</span>
+              <span className="text-sm text-zinc-500">ID</span>
+              <span className="rounded px-2 py-0.5 text-sm text-zinc-300">{node.id}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-zinc-500">Visibility</span>
-              <span className="rounded px-2 py-0.5 text-xs capitalize text-zinc-300">{node.visibility}</span>
+              <span className="text-sm text-zinc-500">Visibility</span>
+              <span className="rounded px-2 py-0.5 text-smcapitalize text-zinc-300">{node.visibility}</span>
             </div>
             {node.riskLevel && (
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-500">Risk</span>
-                <span className="rounded px-2 py-0.5 text-xs capitalize text-zinc-300">{node.riskLevel}</span>
+                <span className="text-sm text-zinc-500">Risk</span>
+                <span className="rounded px-2 py-0.5 text-smcapitalize text-zinc-300">{node.riskLevel}</span>
               </div>
             )}
           </div>
@@ -168,8 +168,8 @@ export default function PrivacyNode({
                 </svg>
               </div>
               <div className="text-center">
-                <p className="text-xs font-medium text-zinc-300">Content Protected</p>
-                <p className="mt-1 text-[10px] leading-tight text-zinc-500">
+                <p className="text-sm font-medium text-zinc-300">Content Protected</p>
+                <p className="mt-1 text-xs leading-tight text-zinc-500">
                   {ownerLabel
                     ? `Switch to ${ownerLabel}'s session to reveal`
                     : "Only the owner can view this node"}
@@ -183,10 +183,10 @@ export default function PrivacyNode({
       {/* Revealed content (only when owner) */}
       {isOwner && (
         <div className="animate-in fade-in slide-in-from-bottom-2 px-4 py-3 duration-500">
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-widest text-emerald-500/70">
+          <p className="mb-1.5 text-[13px] font-semibold uppercase tracking-widest text-emerald-500/70">
             Full Access
           </p>
-          <p className="text-xs leading-relaxed text-zinc-400">
+          <p className="text-smleading-relaxed text-zinc-400">
             You are viewing this node as its owner. All details are visible.
           </p>
         </div>

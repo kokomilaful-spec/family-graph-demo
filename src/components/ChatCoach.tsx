@@ -111,9 +111,9 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-zinc-100">Chat Coach</h3>
+            <h3 className="text-base font-semibold text-zinc-100">Chat Coach</h3>
             {node && owner && (
-              <p className="text-[10px] text-zinc-500">
+              <p className="text-xs text-zinc-500">
                 Talking to {owner.label} about{" "}
                 <span className="text-red-400">{node.label}</span>
               </p>
@@ -121,7 +121,7 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] text-red-400">
+          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs text-red-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
             High Risk
           </span>
@@ -149,17 +149,17 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
                 <div className="h-3 w-3/5 rounded bg-white/[0.04]" />
               </div>
             ))}
-            <p className="text-center text-[10px] text-zinc-600">Generating coaching scripts...</p>
+            <p className="text-center text-xs text-zinc-600">Generating coaching scripts...</p>
           </div>
         )}
 
         {/* Error state */}
         {error && (
           <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-center">
-            <p className="mb-2 text-xs text-red-400">{error}</p>
+            <p className="mb-2 text-sm text-red-400">{error}</p>
             <button
               onClick={() => nodeId && fetchScripts(nodeId)}
-              className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs text-red-400 transition-colors hover:bg-red-500/20"
+              className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-sm text-red-400 transition-colors hover:bg-red-500/20"
             >
               Retry
             </button>
@@ -177,17 +177,17 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
                   className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 transition-colors hover:bg-white/[0.04]"
                 >
                   {/* Tone badge */}
-                  <span className={`mb-2 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${colorClass}`}>
+                  <span className={`mb-2 inline-block rounded-full border px-2 py-0.5 text-xs font-medium ${colorClass}`}>
                     {script.tone}
                   </span>
 
                   {/* Message */}
-                  <p className="mb-2 text-xs leading-relaxed text-zinc-300">
+                  <p className="mb-2 text-smleading-relaxed text-zinc-300">
                     &ldquo;{script.message}&rdquo;
                   </p>
 
                   {/* Follow-up */}
-                  <p className="mb-3 text-[10px] italic text-zinc-500">
+                  <p className="mb-3 text-xs italic text-zinc-500">
                     Follow-up: {script.followUp}
                   </p>
 
@@ -195,7 +195,7 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleCopy(script.message, idx)}
-                      className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-[10px] text-zinc-400 transition-colors hover:bg-white/[0.08] hover:text-zinc-200"
+                      className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.04] px-2.5 py-1.5 text-xs text-zinc-400 transition-colors hover:bg-white/[0.08] hover:text-zinc-200"
                     >
                       {copiedIdx === idx ? (
                         <>
@@ -216,7 +216,7 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
 
                     <button
                       onClick={() => handleNudge(idx)}
-                      className="flex items-center gap-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1.5 text-[10px] text-indigo-400 transition-colors hover:bg-indigo-500/20 hover:text-indigo-300"
+                      className="flex items-center gap-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-1.5 text-xs text-indigo-400 transition-colors hover:bg-indigo-500/20 hover:text-indigo-300"
                     >
                       {nudgedIdx === idx ? (
                         <>

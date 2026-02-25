@@ -28,7 +28,7 @@ function Section({
 }) {
   return (
     <details open={defaultOpen} className="group border-b border-zinc-800">
-      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 select-none hover:text-zinc-300">
+      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[13px] font-semibold uppercase tracking-widest text-zinc-500 select-none hover:text-zinc-300">
         {title}
         <svg
           className="h-3 w-3 transition-transform group-open:rotate-90"
@@ -63,8 +63,8 @@ function Slider({
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-zinc-400">{label}</span>
-        <span className="text-[11px] tabular-nums text-zinc-600">{value}</span>
+        <span className="text-sm text-zinc-400">{label}</span>
+        <span className="text-[13px] tabular-nums text-zinc-600">{value}</span>
       </div>
       <input
         type="range"
@@ -91,7 +91,7 @@ function Toggle({
 }) {
   return (
     <label className="flex cursor-pointer items-center justify-between py-1">
-      <span className="text-xs text-zinc-400">{label}</span>
+      <span className="text-sm text-zinc-400">{label}</span>
       <button
         role="switch"
         aria-checked={checked}
@@ -151,42 +151,51 @@ export default function GraphSettings({ settings, onChange, onExport, onImport }
     <div className="flex h-full flex-col overflow-y-auto">
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-3">
-        <svg className="h-4 w-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <span className="text-sm font-semibold text-zinc-200">Graph Settings</span>
+        <span className="text-base font-semibold text-zinc-200">Graph Settings</span>
       </div>
 
-      {/* Viewing As */}
-      <Section title="Viewing As">
-        <div className="flex flex-col gap-1">
-          <span className="text-[11px] text-zinc-500">Current User</span>
-          <select
-            value={settings.viewerId}
-            onChange={(e) => update({ viewerId: e.target.value })}
-            className="rounded-md border border-zinc-700 bg-zinc-800 px-2.5 py-1.5 text-sm text-zinc-200 outline-none focus:border-blue-600"
+      {/* Viewing As — prominent, non-collapsible */}
+      <div className="border-b border-zinc-800 px-4 py-3">
+        <div className="flex items-center gap-2.5">
+          <span
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-base font-bold"
+            style={{
+              background: "linear-gradient(135deg, rgba(99,102,241,0.3), rgba(168,85,247,0.3))",
+              color: "#c4b5fd",
+            }}
           >
-            {members.map((m) => (
-              <option key={m.id} value={m.id}>{m.label}</option>
-            ))}
-          </select>
-          <p className="mt-1 text-[10px] leading-tight text-zinc-600">
-            Controls which private/guarded nodes are visible based on family role
-          </p>
+            {(members.find((m) => m.id === settings.viewerId)?.label ?? "?").charAt(0)}
+          </span>
+          <div className="min-w-0 flex-1">
+            <label className="mb-0.5 block text-xs font-semibold uppercase tracking-widest text-indigo-400/70">
+              Viewing As
+            </label>
+            <select
+              value={settings.viewerId}
+              onChange={(e) => update({ viewerId: e.target.value })}
+              className="w-full rounded-md border border-indigo-500/30 bg-indigo-500/10 px-2 py-1 text-base font-medium text-zinc-200 outline-none transition-colors focus:border-indigo-500/60 focus:bg-indigo-500/15"
+            >
+              {members.map((m) => (
+                <option key={m.id} value={m.id} className="bg-zinc-800 text-zinc-200">{m.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
-      </Section>
+        <p className="mt-2 text-xs leading-tight text-zinc-600">
+          Controls which nodes you can see based on family privacy settings
+        </p>
+      </div>
 
       {/* Filters */}
       <Section title="Filters">
         <div className="flex flex-col gap-2">
           {/* Member Selector */}
           <div className="flex flex-col gap-1">
-            <span className="text-[11px] text-zinc-500">Focus Member</span>
+            <span className="text-[13px] text-zinc-500">Focus Member</span>
             <select
               value={settings.selectedId ?? ""}
               onChange={(e) => update({ selectedId: e.target.value || null })}
-              className="rounded-md border border-zinc-700 bg-zinc-800 px-2.5 py-1.5 text-sm text-zinc-200 outline-none focus:border-blue-600"
+              className="rounded-md border border-zinc-700 bg-zinc-800 px-2.5 py-1.5 text-base text-zinc-200 outline-none focus:border-blue-600"
             >
               <option value="">All Members</option>
               {members.map((m) => (
@@ -216,7 +225,7 @@ export default function GraphSettings({ settings, onChange, onExport, onImport }
           {(Object.keys(NODE_TYPE_COLORS) as NodeType[]).map((type) => (
             <label
               key={type}
-              className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-zinc-800"
+              className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-basetransition-colors hover:bg-zinc-800"
             >
               <span
                 className="h-2.5 w-2.5 rounded-full"
@@ -270,19 +279,19 @@ export default function GraphSettings({ settings, onChange, onExport, onImport }
       {/* Memory */}
       <Section title="Memory" defaultOpen={false}>
         <div className="flex flex-col gap-2">
-          <p className="text-[10px] leading-tight text-zinc-600">
+          <p className="text-xs leading-tight text-zinc-600">
             Export the full family graph as JSON, or import a previously saved snapshot.
           </p>
           <button
             onClick={onExport}
-            className="flex items-center justify-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[11px] font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+            className="flex items-center justify-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-[13px] font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
           >
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3" />
             </svg>
             Export Family Memory
           </button>
-          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-[11px] font-medium text-blue-400 transition-colors hover:bg-blue-500/20">
+          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-2 text-[13px] font-medium text-blue-400 transition-colors hover:bg-blue-500/20">
             <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M16 6l-4-4m0 0L8 6m4-4v13" />
             </svg>

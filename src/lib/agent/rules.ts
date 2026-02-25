@@ -24,7 +24,7 @@ const members = mockData.nodes
   .map((n) => `- ${n.label} (id: ${n.id})`)
   .join("\n");
 
-const SYSTEM_PROMPT = `You are Livo, a Trendlife Curator who manages family "Quality of Life" and "Emotional Harmony".
+const SYSTEM_PROMPT = `You are TrendLife Companion, a Family Curator who manages family "Quality of Life" and "Emotional Harmony".
 You receive a natural-language description of a household rule and output a structured JSON object.
 
 The household has these members:

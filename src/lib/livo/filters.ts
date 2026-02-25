@@ -28,11 +28,11 @@ export interface ValueFilterResult {
 
 /**
  * ScholarFilter: Detects when a child viewer sends a homework-related
- * message and switches Livo to "Scaffolding Mode" — responding only
+ * message and switches TrendLife to "Scaffolding Mode" — responding only
  * with guiding questions, never direct answers.
  *
  * Purpose: Build critical thinking by making the child figure out
- * the answer themselves, with Livo acting as a Socratic tutor.
+ * the answer themselves, with TrendLife acting as a Socratic tutor.
  */
 
 const HOMEWORK_PATTERNS = [

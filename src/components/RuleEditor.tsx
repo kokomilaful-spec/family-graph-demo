@@ -67,7 +67,7 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
 
   return (
     <details open className="group border-b border-zinc-800">
-      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 select-none hover:text-zinc-300">
+      <summary className="flex cursor-pointer items-center justify-between px-4 py-3 text-[13px] font-semibold uppercase tracking-widest text-zinc-500 select-none hover:text-zinc-300">
         House Rules
         <svg
           className="h-3 w-3 transition-transform group-open:rotate-90"
@@ -89,7 +89,7 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
               onChange={(e) => setInput(e.target.value)}
               placeholder="e.g. No screens after 9pm"
               disabled={loading}
-              className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-1.5 pl-7 text-[11px] text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-amber-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
+              className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-1.5 pl-7 text-[13px] text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-amber-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
             />
             {/* Clock icon */}
             <svg
@@ -121,7 +121,7 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
         </form>
 
         {error && (
-          <p className="mb-2 text-[10px] text-red-400">{error}</p>
+          <p className="mb-2 text-xs text-red-400">{error}</p>
         )}
 
         {/* Rule list */}
@@ -136,7 +136,7 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
                 <div className="flex items-start justify-between gap-1">
                   <div className="flex items-center gap-1.5">
                     <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
-                    <span className="text-[11px] font-medium text-zinc-200">{rule.label}</span>
+                    <span className="text-[13px] font-medium text-zinc-200">{rule.label}</span>
                   </div>
                   {!isStatic && (
                     <button
@@ -150,10 +150,10 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
                   )}
                 </div>
                 <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 pl-3.5">
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-xs text-zinc-500">
                     <span className="text-zinc-600">if</span> {rule.condition}
                   </span>
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-xs text-zinc-500">
                     <span className="text-zinc-600">then</span> {rule.action}
                   </span>
                 </div>
@@ -161,7 +161,7 @@ export default function RuleEditor({ rules, onAddRule, onRemoveRule }: RuleEdito
             );
           })}
           {rules.length === 0 && (
-            <p className="text-center text-[10px] text-zinc-600">No rules yet</p>
+            <p className="text-center text-xs text-zinc-600">No rules yet</p>
           )}
         </div>
       </div>

@@ -207,21 +207,21 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
             )}
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-zinc-100">{displayLabel}</h2>
+            <h2 className="text-base font-semibold text-zinc-100">{displayLabel}</h2>
             <div className="mt-0.5 flex items-center gap-1.5">
               <span
-                className="inline-block rounded-full px-2 py-0.5 text-[10px] font-medium capitalize"
+                className="inline-block rounded-full px-2 py-0.5 text-xs font-medium capitalize"
                 style={{ backgroundColor: `${color}20`, color }}
               >
                 {node.type}
               </span>
               {isHighRisk && (
-                <span className="inline-block rounded-full bg-red-500/15 px-2 py-0.5 text-[10px] font-medium text-red-400">
+                <span className="inline-block rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-400">
                   High Risk
                 </span>
               )}
               {isAchievement && (
-                <span className="inline-block rounded-full bg-yellow-500/15 px-2 py-0.5 text-[10px] font-medium text-yellow-400">
+                <span className="inline-block rounded-full bg-yellow-500/15 px-2 py-0.5 text-xs font-medium text-yellow-400">
                   Achievement
                 </span>
               )}
@@ -242,13 +242,13 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
       {isMasked && (
         <div className="border-b border-zinc-800 px-4 py-3">
           <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-3">
-            <p className="text-xs leading-relaxed text-zinc-400">
+            <p className="text-smleading-relaxed text-zinc-400">
               This node has been flagged as <span className="font-medium text-red-400">high risk</span>.
               Details are restricted to the node owner.
             </p>
             <button
               onClick={() => alert(`Access request sent for "${node.label}" to the node owner.`)}
-              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/20"
+              className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20"
             >
               <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
@@ -261,15 +261,15 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
 
       {/* Properties */}
       <div className="border-b border-zinc-800 px-4 py-3">
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+        <p className="mb-2 text-[13px] font-semibold uppercase tracking-widest text-zinc-500">
           Properties
         </p>
         <div className="flex flex-col gap-1.5">
           {meta.map((m) => (
             <div key={m.key} className="flex items-center justify-between">
-              <span className="text-xs text-zinc-500">{m.key}</span>
+              <span className="text-sm text-zinc-500">{m.key}</span>
               <span
-                className="rounded px-2 py-0.5 text-xs capitalize"
+                className="rounded px-2 py-0.5 text-smcapitalize"
                 style={{
                   backgroundColor: m.color ? `${m.color}15` : undefined,
                   color: m.color ?? undefined,
@@ -285,7 +285,7 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
       {/* Connections (hidden for masked nodes) */}
       {!isMasked && (
         <div className="px-4 py-3">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500">
+          <p className="mb-2 text-[13px] font-semibold uppercase tracking-widest text-zinc-500">
             Connections
             <span className="ml-1.5 text-zinc-600">({connections.length})</span>
           </p>
@@ -293,7 +293,7 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
             {connections.map((c, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-zinc-800/60"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-basehover:bg-zinc-800/60"
               >
                 {c.node && (
                   <span
@@ -302,7 +302,7 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
                   />
                 )}
                 <span className="text-zinc-300">{c.node?.label ?? "?"}</span>
-                <span className="ml-auto text-[11px] text-zinc-600">
+                <span className="ml-auto text-[13px] text-zinc-600">
                   {c.relation.replace(/_/g, " ")}
                 </span>
               </div>

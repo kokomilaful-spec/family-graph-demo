@@ -30,8 +30,8 @@ export interface RespectHonorScript {
  *
  * Detection criteria:
  * - Event impact is "Negative" with intensity >= 3
- * - Event description matches financial risk patterns (gold fund,
- *   investment, high return, scam, etc.)
+ * - Event description matches financial risk patterns (investment group,
+ *   high return, scam, etc.)
  * - At least one involved member is a grandparent
  * - At least one parent exists in the graph to be coached
  *
@@ -56,6 +56,9 @@ export function livo_mediator(
     /risky.*invest/i,
     /unregistered.*fund/i,
     /too.*good.*true/i,
+    /investment.*group/i,
+    /投資.*群組/i,
+    /可疑.*投資/i,
   ];
 
   for (const event of events) {
@@ -138,21 +141,21 @@ function buildRespectHonorScripts(
   return [
     {
       tone: "Respect & Honor",
-      message: `Hey Mom, you're an expert in gold. Can you teach me how to check this firm's credentials? I'd love to learn from your experience before we commit any money.`,
-      followUp: `What was it about this fund that caught your eye? I bet you noticed something I'd miss.`,
-      livoNote: `Trendlife Curator tip: ${elderName} has decades of life experience. Position yourself as the learner, not the authority. By asking her to teach you, you honor her wisdom while naturally guiding a due-diligence conversation. Never say "you got scammed" — say "teach me how to evaluate this."`,
+      message: `Mom, I heard you joined an investment group? I don't know much about investing — could you teach me how to evaluate it?`,
+      followUp: `How did you find that group? What do they discuss?`,
+      livoNote: `Let ${elderName} be the teacher, not the accused. Asking "teach me" works far better than saying "you got scammed."`,
     },
     {
       tone: "Curiosity & Admiration",
-      message: `Mom, I heard you're looking into a gold investment — that sounds really interesting! I don't know much about this area. Could we sit down together and go through the details? I trust your judgment and I'd love to understand it better.`,
-      followUp: `Have you talked to anyone else about it? Maybe we could also ask Uncle Chen — he used to work in banking.`,
-      livoNote: `Trendlife Curator tip: Frame the conversation as a family learning opportunity, not a intervention. ${elderName} is more receptive when she feels admired, not doubted. Bringing in a trusted third party (Uncle, friend) adds perspective without undermining her.`,
+      message: `Mom, that group sounds interesting — can we look into it together? I'd love to learn from you.`,
+      followUp: `Has anyone in the group actually made money? We could check together.`,
+      livoNote: `Turn the conversation into learning together, not intervening. ${elderName} is more open when she feels respected.`,
     },
     {
       tone: "Family Partnership",
-      message: `Mom, I was thinking — our family finances affect all of us, and I'd love your guidance on how to evaluate investments. You've always been smart with money. Can we review this gold fund together as a family project?`,
-      followUp: `What if we made a checklist together? Things like — is the firm registered, what are the fees, can we verify the returns?`,
-      livoNote: `Trendlife Curator tip: Turn this into a shared activity, not a solo decision. ${elderName} keeps her dignity and agency while ${parentName} gains visibility into the details. The "family project" framing makes due diligence feel collaborative, not controlling.`,
+      message: `Mom, family finances affect all of us — can we look into this group together?`,
+      followUp: `Let's make a checklist: Is the firm registered? What are the fees? Are the returns too high?`,
+      livoNote: `Turn verification into a family activity. ${elderName} keeps the lead, and ${parentName} stays informed.`,
     },
   ];
 }

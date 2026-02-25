@@ -24,11 +24,11 @@ export default function StatusBar({ selectedNodeId, viewerId, onDeselect }: Stat
   const achievementCount = data.nodes.filter((n) => n.isAchievement).length;
 
   return (
-    <div className="flex h-7 items-center justify-between border-t border-white/[0.06] bg-[rgba(15,15,22,0.6)] px-4 text-[11px] text-zinc-500 backdrop-blur-xl">
+    <div className="flex h-7 items-center justify-between border-t border-white/[0.06] bg-[rgba(15,15,22,0.6)] px-4 text-[13px] text-zinc-500 backdrop-blur-xl">
       <span className="flex items-center gap-1.5">
         <span className="text-zinc-400">Viewing as</span>
         <span className="font-medium text-zinc-300">{viewerLabel}</span>
-        <span className="rounded bg-zinc-800 px-1 py-0.5 text-[9px] text-zinc-500">{viewerRole}</span>
+        <span className="rounded bg-zinc-800 px-1 py-0.5 text-[11px] text-zinc-500">{viewerRole}</span>
         {highRiskCount > 0 && (
           <>
             <span className="text-zinc-700">&middot;</span>

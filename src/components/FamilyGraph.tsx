@@ -1262,7 +1262,7 @@ export default function FamilyGraph({
           <div className="rounded-lg border border-white/[0.06] bg-[rgba(15,15,22,0.85)] px-3 py-2 backdrop-blur-lg">
             <button
               onClick={() => setLegendOpen(false)}
-              className="mb-1.5 flex w-full items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-zinc-500"
+              className="mb-1.5 flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500"
             >
               Legend
               <svg className="h-3 w-3 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -1276,7 +1276,7 @@ export default function FamilyGraph({
                     className="inline-block h-2.5 w-2.5 rounded-sm"
                     style={{ backgroundColor: color, opacity: 0.8 }}
                   />
-                  <span className="text-[10px] capitalize text-zinc-400">
+                  <span className="text-xs capitalize text-zinc-400">
                     {type === "house_rule" ? "House Rule" : type}
                   </span>
                 </div>
@@ -1286,7 +1286,7 @@ export default function FamilyGraph({
         ) : (
           <button
             onClick={() => setLegendOpen(true)}
-            className="rounded-lg border border-white/[0.06] bg-[rgba(15,15,22,0.85)] px-2.5 py-1.5 text-[10px] text-zinc-500 backdrop-blur-lg transition-colors hover:text-zinc-300"
+            className="rounded-lg border border-white/[0.06] bg-[rgba(15,15,22,0.85)] px-2.5 py-1.5 text-xs text-zinc-500 backdrop-blur-lg transition-colors hover:text-zinc-300"
           >
             Legend
           </button>

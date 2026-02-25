@@ -188,72 +188,6 @@ const RATING_STYLES: Record<
 
 // ── Glowing Sphere (small inline version) ────────────────────
 
-function LivoMiniSphere({ active }: { active: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const tickRef = useRef(0);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const S = 28;
-    canvas.width = S * 2;
-    canvas.height = S * 2;
-    ctx.scale(2, 2);
-
-    const draw = () => {
-      tickRef.current++;
-      const t = tickRef.current;
-      ctx.clearRect(0, 0, S, S);
-
-      const cx = S / 2;
-      const cy = S / 2;
-      const baseR = 8;
-      const amp = active ? 2 : 0.6;
-      const speed = active ? 0.07 : 0.025;
-      const r = baseR + Math.sin(t * speed) * amp;
-
-      // Glow
-      const glow = ctx.createRadialGradient(cx, cy, r * 0.4, cx, cy, r + 6);
-      glow.addColorStop(0, active ? "rgba(129,140,248,0.35)" : "rgba(129,140,248,0.15)");
-      glow.addColorStop(1, "rgba(99,102,241,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
-      ctx.fillStyle = glow;
-      ctx.fill();
-
-      // Body
-      const body = ctx.createRadialGradient(cx - r * 0.2, cy - r * 0.25, r * 0.1, cx, cy, r);
-      body.addColorStop(0, "rgba(165,180,252,0.95)");
-      body.addColorStop(0.5, "rgba(99,102,241,0.85)");
-      body.addColorStop(1, "rgba(49,46,129,0.6)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = body;
-      ctx.fill();
-
-      // Specular
-      ctx.beginPath();
-      ctx.ellipse(cx - r * 0.15, cy - r * 0.25, r * 0.3, r * 0.15, -0.5, 0, Math.PI * 2);
-      const spec = ctx.createRadialGradient(cx - r * 0.15, cy - r * 0.25, 0, cx - r * 0.15, cy - r * 0.25, r * 0.3);
-      spec.addColorStop(0, "rgba(255,255,255,0.45)");
-      spec.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = spec;
-      ctx.fill();
-
-      rafRef.current = requestAnimationFrame(draw);
-    };
-
-    draw();
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [active]);
-
-  return <canvas ref={canvasRef} className="h-7 w-7 shrink-0" />;
-}
-
 // ── Component ────────────────────────────────────────────────
 
 export default function FamilyChat({
@@ -508,7 +442,7 @@ export default function FamilyChat({
           },
         ]);
 
-        // Add Livo coaching feedback
+        // Add TrendLife coaching feedback
         setMessages((prev) => [
           ...prev,
           {
@@ -567,7 +501,7 @@ export default function FamilyChat({
           role: "livo",
           text: followUp
             ? `Great approach. You might follow up with: "${followUp}"`
-            : "Message sent. Livo is here if you need more guidance.",
+            : "Message sent. TrendLife is here if you need more guidance.",
         },
       ]);
     }, 600);
@@ -598,35 +532,34 @@ export default function FamilyChat({
     >
       {/* ── Header ── */}
       <div className="flex items-center gap-2.5 border-b border-white/[0.06] px-4 py-3">
-        <LivoMiniSphere active={loading || practicing} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold text-zinc-100">Livo</h3>
-            <span className="rounded-full bg-indigo-500/15 px-1.5 py-0.5 text-[9px] font-medium text-indigo-400">
-              Trendlife Curator
+            <h3 className="text-base font-semibold text-zinc-100">TrendLife Companion</h3>
+            <span className="rounded-full bg-indigo-500/15 px-1.5 py-0.5 text-[11px] font-medium text-indigo-400">
+              Family Curator
             </span>
           </div>
           {mediatorMode && mediatorAlert ? (
-            <p className="truncate text-[10px] text-zinc-500">
+            <p className="truncate text-xs text-zinc-500">
               Respect &amp; Honor &middot;{" "}
               <span className="text-amber-500">{mediatorAlert.elderLabel}</span>
               {" \u2192 "}
               <span className="text-zinc-400">{mediatorAlert.parentLabel}</span>
             </p>
           ) : trendlifeMode && highRiskAlert ? (
-            <p className="truncate text-[10px] text-zinc-500">
+            <p className="truncate text-xs text-zinc-500">
               Trendlife Alert &middot;{" "}
               <span className="text-red-400">{highRiskAlert.childLabel}</span>
               {" \u2192 "}
               <span className="text-zinc-400">{highRiskAlert.parentLabel}</span>
             </p>
           ) : empathyMode && activeNegativeEvent ? (
-            <p className="truncate text-[10px] text-zinc-500">
+            <p className="truncate text-xs text-zinc-500">
               Empathy Coach &middot;{" "}
               <span className="text-amber-400/80">{empathyMemberNames.join(", ")}</span>
             </p>
           ) : node && owner ? (
-            <p className="truncate text-[10px] text-zinc-500">
+            <p className="truncate text-xs text-zinc-500">
               {practiceMode ? (
                 <>
                   Practice &middot; role-playing as{" "}
@@ -644,31 +577,31 @@ export default function FamilyChat({
           ) : null}
         </div>
         {mediatorMode && (
-          <span className="flex items-center gap-1 rounded-full border border-amber-600/30 bg-amber-600/10 px-2 py-0.5 text-[10px] text-amber-500">
+          <span className="flex items-center gap-1 rounded-full border border-amber-600/30 bg-amber-600/10 px-2 py-0.5 text-xs text-amber-500">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
             Mediator
           </span>
         )}
         {trendlifeMode && !mediatorMode && (
-          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] text-red-400">
+          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs text-red-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
             Alert
           </span>
         )}
         {empathyMode && (
-          <span className="flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-400">
+          <span className="flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" />
             Empathy
           </span>
         )}
         {!empathyMode && practiceMode && (
-          <span className="flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-[10px] text-purple-400">
+          <span className="flex items-center gap-1 rounded-full border border-purple-500/30 bg-purple-500/10 px-2 py-0.5 text-xs text-purple-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400" />
             Practice
           </span>
         )}
         {!empathyMode && !practiceMode && isHighRisk && (
-          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-[10px] text-red-400">
+          <span className="flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2 py-0.5 text-xs text-red-400">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-400" />
             High Risk
           </span>
@@ -717,67 +650,58 @@ export default function FamilyChat({
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
               />
             </svg>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-400/80">
+            <span className="text-xs font-semibold uppercase tracking-widest text-amber-400/80">
               Empathy-First Coach
             </span>
           </div>
 
           {/* Event description — human-readable, no IDs or risk levels */}
           <div className="mx-4 mb-3 rounded-lg border border-amber-500/15 bg-amber-500/[0.04] px-3 py-2">
-            <p className="text-[11px] leading-relaxed text-zinc-300">
+            <p className="text-[13px] leading-relaxed text-zinc-300">
               {activeNegativeEvent.description}
             </p>
-            <p className="mt-1 text-[10px] text-zinc-500">
+            <p className="mt-1 text-xs text-zinc-500">
               {empathyMemberNames.join(", ")} &middot; Intensity {activeNegativeEvent.intensity}/5
             </p>
           </div>
 
-          {/* Empathy script cards */}
-          <div className="flex gap-2.5 overflow-x-auto px-4 pb-1">
+          {/* Empathy script accordion */}
+          <div className="flex flex-col gap-1 px-4 pb-2">
             {empathyScripts.map((script, idx) => {
               const isSelected = selectedIdx === idx;
               return (
-                <div
-                  key={idx}
-                  className={`group w-56 shrink-0 cursor-pointer rounded-xl border p-3 transition-all ${
-                    isSelected
-                      ? "ring-2 ring-amber-500/40 border-white/[0.12] bg-white/[0.06]"
-                      : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"
-                  }`}
-                  onClick={() => setSelectedIdx(idx)}
-                >
-                  <span className="mb-2 inline-block rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium text-amber-400">
-                    {script.tone}
-                  </span>
-                  <p className="mb-1.5 line-clamp-3 text-[11px] leading-relaxed text-zinc-300">
-                    &ldquo;{script.message}&rdquo;
-                  </p>
-                  <p className="mb-2.5 truncate text-[10px] italic text-zinc-600">
-                    Follow-up: {script.followUp}
-                  </p>
+                <div key={idx}>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setInputValue(script.message);
-                      setSelectedIdx(idx);
-                      inputRef.current?.focus();
-                    }}
-                    className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition-colors ${
+                    onClick={() => setSelectedIdx(isSelected ? null : idx)}
+                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all ${
                       isSelected
-                        ? "border-amber-500/30 bg-amber-500/20 text-amber-300"
-                        : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
+                        ? "border-amber-500/30 bg-amber-500/[0.08]"
+                        : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
                     }`}
                   >
-                    {isSelected ? "Applied" : "Apply to Message"}
+                    <span className="shrink-0 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-400">
+                      {script.tone}
+                    </span>
+                    <span className="truncate text-[13px] text-zinc-400">&ldquo;{script.message.slice(0, 25)}...&rdquo;</span>
+                    <svg className={`ml-auto h-3 w-3 shrink-0 text-zinc-600 transition-transform ${isSelected ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
+                  {isSelected && (
+                    <div className="mt-1 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                      <p className="text-[13px] leading-relaxed text-zinc-300">&ldquo;{script.message}&rdquo;</p>
+                      <p className="mt-1 text-xs italic text-zinc-600">Follow-up: {script.followUp}</p>
+                      <button
+                        onClick={() => { setInputValue(script.message); setSelectedIdx(idx); inputRef.current?.focus(); }}
+                        className="mt-2 flex w-full items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/15 px-2.5 py-1.5 text-xs font-medium text-amber-300 transition-colors hover:bg-amber-500/25"
+                      >
+                        Apply to Message
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
-          </div>
-          <div className="flex justify-center gap-1 pb-2">
-            {empathyScripts.map((_, i) => (
-              <span key={i} className={`inline-block h-1 w-1 rounded-full transition-colors ${selectedIdx === i ? "bg-amber-400" : "bg-zinc-700"}`} />
-            ))}
           </div>
 
           {/* Practice with empathy context */}
@@ -785,21 +709,21 @@ export default function FamilyChat({
             {practiceMode ? (
               <button
                 onClick={handleEndPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[11px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[13px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
               >
                 End Practice Session
               </button>
             ) : (
               <button
                 onClick={handleStartPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/25 bg-amber-500/8 px-3 py-2 text-[11px] font-medium text-amber-400 transition-colors hover:bg-amber-500/15"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-500/25 bg-amber-500/8 px-3 py-2 text-[13px] font-medium text-amber-400 transition-colors hover:bg-amber-500/15"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Practice with Livo
-                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[9px]">
-                  Livo role-plays as {empathyChildName}
+                Practice with TrendLife
+                <span className="rounded bg-amber-500/20 px-1.5 py-0.5 text-[11px]">
+                  TrendLife role-plays as {empathyChildName}
                 </span>
               </button>
             )}
@@ -807,7 +731,7 @@ export default function FamilyChat({
         </div>
       )}
 
-      {/* ── LivoMediator: Respect & Honor scripts for elder financial risks ── */}
+      {/* ── TrendLife Mediator: Respect & Honor scripts for elder financial risks ── */}
       {!empathyMode && mediatorMode && (
         <div className="shrink-0 border-b border-amber-600/15 bg-amber-600/[0.03]">
           {/* Section header */}
@@ -825,82 +749,63 @@ export default function FamilyChat({
                 d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21"
               />
             </svg>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-amber-500/80">
+            <span className="text-xs font-semibold uppercase tracking-widest text-amber-500/80">
               Respect &amp; Honor
             </span>
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[11px] text-zinc-600">
               Elder financial concern
             </span>
           </div>
 
           {/* Alert context */}
           <div className="mx-4 mb-3 rounded-lg border border-amber-600/15 bg-amber-600/[0.04] px-3 py-2">
-            <p className="text-[11px] leading-relaxed text-zinc-300">
+            <p className="text-[13px] leading-relaxed text-zinc-300">
               {mediatorAlert!.event.description}
             </p>
-            <p className="mt-1 text-[10px] text-zinc-500">
+            <p className="mt-1 text-xs text-zinc-500">
               {mediatorAlert!.elderLabel} &middot; Coaching for {mediatorAlert!.parentLabel} &middot; Intensity {mediatorAlert!.event.intensity}/5
             </p>
           </div>
 
-          {/* Respect & Honor coaching script cards */}
-          <div className="flex gap-2.5 overflow-x-auto px-4 pb-3">
+          {/* Respect & Honor coaching script accordion */}
+          <div className="flex flex-col gap-1 px-4 pb-2">
             {mediatorScripts.map((script, idx) => {
               const isScriptSelected = selectedIdx === idx;
               const toneClass =
                 TONE_COLORS[script.tone] ??
                 "border-zinc-500/30 bg-zinc-500/15 text-zinc-400";
-              const ringClass =
-                TONE_RING[script.tone] ?? "ring-zinc-500/40";
 
               return (
-                <div
-                  key={idx}
-                  className={`group w-56 shrink-0 cursor-pointer rounded-xl border p-3 transition-all ${
-                    isScriptSelected
-                      ? `ring-2 ${ringClass} border-white/[0.12] bg-white/[0.06]`
-                      : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"
-                  }`}
-                  onClick={() => setSelectedIdx(idx)}
-                >
-                  {/* Tone badge */}
-                  <span
-                    className={`mb-2 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${toneClass}`}
-                  >
-                    {script.tone}
-                  </span>
-
-                  {/* Message preview */}
-                  <p className="mb-1.5 line-clamp-3 text-[11px] leading-relaxed text-zinc-300">
-                    &ldquo;{script.message}&rdquo;
-                  </p>
-
-                  {/* Follow-up */}
-                  <p className="mb-1 truncate text-[10px] italic text-zinc-600">
-                    Follow-up: {script.followUp}
-                  </p>
-
-                  {/* Livo curator note */}
-                  <p className="mb-2.5 line-clamp-2 text-[9px] leading-snug text-amber-500/50">
-                    {script.livoNote}
-                  </p>
-
-                  {/* Apply button */}
+                <div key={idx}>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setInputValue(script.message);
-                      setSelectedIdx(idx);
-                      inputRef.current?.focus();
-                    }}
-                    className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition-colors ${
+                    onClick={() => setSelectedIdx(isScriptSelected ? null : idx)}
+                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all ${
                       isScriptSelected
-                        ? "border-amber-600/30 bg-amber-600/20 text-amber-400"
-                        : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
+                        ? "border-amber-600/30 bg-amber-600/[0.08]"
+                        : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
                     }`}
                   >
-                    {isScriptSelected ? "Applied" : "Apply to Message"}
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${toneClass}`}>
+                      {script.tone}
+                    </span>
+                    <span className="truncate text-[13px] text-zinc-400">&ldquo;{script.message.slice(0, 20)}...&rdquo;</span>
+                    <svg className={`ml-auto h-3 w-3 shrink-0 text-zinc-600 transition-transform ${isScriptSelected ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
+                  {isScriptSelected && (
+                    <div className="mt-1 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                      <p className="text-[13px] leading-relaxed text-zinc-300">&ldquo;{script.message}&rdquo;</p>
+                      <p className="mt-1 text-xs italic text-zinc-600">Follow-up: {script.followUp}</p>
+                      <p className="mt-1 text-[11px] leading-snug text-amber-500/50">{script.livoNote}</p>
+                      <button
+                        onClick={() => { setInputValue(script.message); setSelectedIdx(idx); inputRef.current?.focus(); }}
+                        className="mt-2 flex w-full items-center justify-center rounded-lg border border-amber-600/30 bg-amber-600/15 px-2.5 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-600/25"
+                      >
+                        Apply to Message
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -911,21 +816,21 @@ export default function FamilyChat({
             {practiceMode ? (
               <button
                 onClick={handleEndPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[11px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[13px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
               >
                 End Practice Session
               </button>
             ) : (
               <button
                 onClick={handleStartPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-600/25 bg-amber-600/8 px-3 py-2 text-[11px] font-medium text-amber-500 transition-colors hover:bg-amber-600/15"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-amber-600/25 bg-amber-600/8 px-3 py-2 text-[13px] font-medium text-amber-500 transition-colors hover:bg-amber-600/15"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Practice with Livo
-                <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[9px]">
-                  Livo role-plays as {mediatorAlert!.elderLabel}
+                Practice with TrendLife
+                <span className="rounded bg-amber-600/20 px-1.5 py-0.5 text-[11px]">
+                  TrendLife role-plays as {mediatorAlert!.elderLabel}
                 </span>
               </button>
             )}
@@ -951,82 +856,63 @@ export default function FamilyChat({
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
               />
             </svg>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-red-400/80">
+            <span className="text-xs font-semibold uppercase tracking-widest text-red-400/80">
               Trendlife Alert
             </span>
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[11px] text-zinc-600">
               App install detected
             </span>
           </div>
 
           {/* Alert context */}
           <div className="mx-4 mb-3 rounded-lg border border-red-500/15 bg-red-500/[0.04] px-3 py-2">
-            <p className="text-[11px] leading-relaxed text-zinc-300">
+            <p className="text-[13px] leading-relaxed text-zinc-300">
               {highRiskAlert!.event.description}
             </p>
-            <p className="mt-1 text-[10px] text-zinc-500">
+            <p className="mt-1 text-xs text-zinc-500">
               {highRiskAlert!.childLabel} &rarr; {highRiskAlert!.parentLabel} &middot; Intensity {highRiskAlert!.event.intensity}/5
             </p>
           </div>
 
-          {/* Trendlife coaching script cards */}
-          <div className="flex gap-2.5 overflow-x-auto px-4 pb-3">
+          {/* Trendlife coaching script accordion */}
+          <div className="flex flex-col gap-1 px-4 pb-2">
             {trendlifeScripts.map((script, idx) => {
               const isScriptSelected = selectedIdx === idx;
               const toneClass =
                 TONE_COLORS[script.tone] ??
                 "border-zinc-500/30 bg-zinc-500/15 text-zinc-400";
-              const ringClass =
-                TONE_RING[script.tone] ?? "ring-zinc-500/40";
 
               return (
-                <div
-                  key={idx}
-                  className={`group w-56 shrink-0 cursor-pointer rounded-xl border p-3 transition-all ${
-                    isScriptSelected
-                      ? `ring-2 ${ringClass} border-white/[0.12] bg-white/[0.06]`
-                      : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"
-                  }`}
-                  onClick={() => setSelectedIdx(idx)}
-                >
-                  {/* Tone badge */}
-                  <span
-                    className={`mb-2 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${toneClass}`}
-                  >
-                    {script.tone}
-                  </span>
-
-                  {/* Message preview */}
-                  <p className="mb-1.5 line-clamp-3 text-[11px] leading-relaxed text-zinc-300">
-                    &ldquo;{script.message}&rdquo;
-                  </p>
-
-                  {/* Follow-up */}
-                  <p className="mb-1 truncate text-[10px] italic text-zinc-600">
-                    Follow-up: {script.followUp}
-                  </p>
-
-                  {/* Livo curator note */}
-                  <p className="mb-2.5 line-clamp-2 text-[9px] leading-snug text-indigo-400/60">
-                    {script.livoNote}
-                  </p>
-
-                  {/* Apply button */}
+                <div key={idx}>
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setInputValue(script.message);
-                      setSelectedIdx(idx);
-                      inputRef.current?.focus();
-                    }}
-                    className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition-colors ${
+                    onClick={() => setSelectedIdx(isScriptSelected ? null : idx)}
+                    className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all ${
                       isScriptSelected
-                        ? "border-red-500/30 bg-red-500/20 text-red-300"
-                        : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
+                        ? "border-red-500/30 bg-red-500/[0.08]"
+                        : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
                     }`}
                   >
-                    {isScriptSelected ? "Applied" : "Apply to Message"}
+                    <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${toneClass}`}>
+                      {script.tone}
+                    </span>
+                    <span className="truncate text-[13px] text-zinc-400">&ldquo;{script.message.slice(0, 25)}...&rdquo;</span>
+                    <svg className={`ml-auto h-3 w-3 shrink-0 text-zinc-600 transition-transform ${isScriptSelected ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
+                  {isScriptSelected && (
+                    <div className="mt-1 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                      <p className="text-[13px] leading-relaxed text-zinc-300">&ldquo;{script.message}&rdquo;</p>
+                      <p className="mt-1 text-xs italic text-zinc-600">Follow-up: {script.followUp}</p>
+                      <p className="mt-1 text-[11px] leading-snug text-indigo-400/60">{script.livoNote}</p>
+                      <button
+                        onClick={() => { setInputValue(script.message); setSelectedIdx(idx); inputRef.current?.focus(); }}
+                        className="mt-2 flex w-full items-center justify-center rounded-lg border border-red-500/30 bg-red-500/15 px-2.5 py-1.5 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/25"
+                      >
+                        Apply to Message
+                      </button>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -1037,21 +923,21 @@ export default function FamilyChat({
             {practiceMode ? (
               <button
                 onClick={handleEndPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[11px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[13px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
               >
                 End Practice Session
               </button>
             ) : (
               <button
                 onClick={handleStartPractice}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/25 bg-red-500/8 px-3 py-2 text-[11px] font-medium text-red-400 transition-colors hover:bg-red-500/15"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/25 bg-red-500/8 px-3 py-2 text-[13px] font-medium text-red-400 transition-colors hover:bg-red-500/15"
               >
                 <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                 </svg>
-                Practice with Livo
-                <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[9px]">
-                  Livo role-plays as {childName}
+                Practice with TrendLife
+                <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-[11px]">
+                  TrendLife role-plays as {childName}
                 </span>
               </button>
             )}
@@ -1059,7 +945,7 @@ export default function FamilyChat({
         </div>
       )}
 
-      {/* ── Coach View: Livo's Coaching section ── */}
+      {/* ── Coach View: TrendLife's Coaching section ── */}
       {!empathyMode && !trendlifeMode && !mediatorMode && isHighRisk && (
         <div className="shrink-0 border-b border-indigo-500/15 bg-indigo-500/[0.03]">
           {/* Section header */}
@@ -1077,10 +963,10 @@ export default function FamilyChat({
                 d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"
               />
             </svg>
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-indigo-400/80">
-              Livo&apos;s Coaching
+            <span className="text-xs font-semibold uppercase tracking-widest text-indigo-400/80">
+              TrendLife Coaching
             </span>
-            <span className="text-[9px] text-zinc-600">
+            <span className="text-[11px] text-zinc-600">
               {loading
                 ? "generating..."
                 : scripts.length > 0
@@ -1110,10 +996,10 @@ export default function FamilyChat({
           {error && (
             <div className="px-4 pb-3">
               <div className="rounded-lg border border-red-500/20 bg-red-500/5 px-3 py-2 text-center">
-                <p className="mb-1.5 text-[10px] text-red-400">{error}</p>
+                <p className="mb-1.5 text-xs text-red-400">{error}</p>
                 <button
                   onClick={() => coachNodeId && fetchScripts(coachNodeId)}
-                  className="rounded-md border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-[10px] text-red-400 hover:bg-red-500/20"
+                  className="rounded-md border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs text-red-400 hover:bg-red-500/20"
                 >
                   Retry
                 </button>
@@ -1121,84 +1007,58 @@ export default function FamilyChat({
             </div>
           )}
 
-          {/* Script cards — horizontal scroll */}
+          {/* Script cards — accordion */}
           {!loading && !error && scripts.length > 0 && (
-            <div className="flex gap-2.5 overflow-x-auto px-4 pb-3">
+            <div className="flex flex-col gap-1 px-4 pb-2">
               {scripts.map((script, idx) => {
                 const isSelected = selectedIdx === idx;
                 const toneClass =
                   TONE_COLORS[script.tone] ??
                   "border-zinc-500/30 bg-zinc-500/15 text-zinc-400";
-                const ringClass =
-                  TONE_RING[script.tone] ?? "ring-zinc-500/40";
 
                 return (
-                  <div
-                    key={idx}
-                    className={`group w-56 shrink-0 cursor-pointer rounded-xl border p-3 transition-all ${
-                      isSelected
-                        ? `ring-2 ${ringClass} border-white/[0.12] bg-white/[0.06]`
-                        : "border-white/[0.06] bg-white/[0.02] hover:border-white/[0.1] hover:bg-white/[0.04]"
-                    }`}
-                    onClick={() => setSelectedIdx(idx)}
-                  >
-                    {/* Tone badge */}
-                    <span
-                      className={`mb-2 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${toneClass}`}
-                    >
-                      {script.tone}
-                    </span>
-
-                    {/* Message preview */}
-                    <p className="mb-1.5 line-clamp-3 text-[11px] leading-relaxed text-zinc-300">
-                      &ldquo;{script.message}&rdquo;
-                    </p>
-
-                    {/* Follow-up */}
-                    <p className="mb-2.5 truncate text-[10px] italic text-zinc-600">
-                      Follow-up: {script.followUp}
-                    </p>
-
-                    {/* Apply button */}
+                  <div key={idx}>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleApply(idx);
-                      }}
-                      className={`flex w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[10px] font-medium transition-colors ${
+                      onClick={() => setSelectedIdx(isSelected ? null : idx)}
+                      className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all ${
                         isSelected
-                          ? "border-indigo-500/30 bg-indigo-500/20 text-indigo-300"
-                          : "border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-200"
+                          ? "border-indigo-500/30 bg-indigo-500/[0.08]"
+                          : "border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.04]"
                       }`}
                     >
-                      <svg
-                        className="h-3 w-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-                        />
+                      <span className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${toneClass}`}>
+                        {script.tone}
+                      </span>
+                      <span className="truncate text-[13px] text-zinc-400">&ldquo;{script.message.slice(0, 25)}...&rdquo;</span>
+                      <svg className={`ml-auto h-3 w-3 shrink-0 text-zinc-600 transition-transform ${isSelected ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
-                      {isSelected ? "Applied" : "Apply to Message"}
                     </button>
+                    {isSelected && (
+                      <div className="mt-1 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                        <p className="text-[13px] leading-relaxed text-zinc-300">&ldquo;{script.message}&rdquo;</p>
+                        <p className="mt-1 text-xs italic text-zinc-600">Follow-up: {script.followUp}</p>
+                        <button
+                          onClick={() => handleApply(idx)}
+                          className="mt-2 flex w-full items-center justify-center rounded-lg border border-indigo-500/30 bg-indigo-500/15 px-2.5 py-1.5 text-xs font-medium text-indigo-300 transition-colors hover:bg-indigo-500/25"
+                        >
+                          Apply to Message
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           )}
 
-          {/* Practice with Livo button */}
+          {/* Practice with TrendLife button */}
           {!loading && !error && scripts.length > 0 && (
             <div className="px-4 pb-3">
               {practiceMode ? (
                 <button
                   onClick={handleEndPractice}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[11px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/10 px-3 py-2 text-[13px] font-medium text-purple-400 transition-colors hover:bg-purple-500/20"
                 >
                   <svg
                     className="h-3.5 w-3.5"
@@ -1218,7 +1078,7 @@ export default function FamilyChat({
               ) : (
                 <button
                   onClick={handleStartPractice}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/8 px-3 py-2 text-[11px] font-medium text-purple-400 transition-colors hover:bg-purple-500/15"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-purple-500/25 bg-purple-500/8 px-3 py-2 text-[13px] font-medium text-purple-400 transition-colors hover:bg-purple-500/15"
                 >
                   <svg
                     className="h-3.5 w-3.5"
@@ -1233,9 +1093,9 @@ export default function FamilyChat({
                       d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                     />
                   </svg>
-                  Practice with Livo
-                  <span className="rounded bg-purple-500/20 px-1.5 py-0.5 text-[9px]">
-                    Livo role-plays as {childName}
+                  Practice with TrendLife
+                  <span className="rounded bg-purple-500/20 px-1.5 py-0.5 text-[11px]">
+                    TrendLife role-plays as {childName}
                   </span>
                 </button>
               )}
@@ -1261,8 +1121,8 @@ export default function FamilyChat({
                 d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21"
               />
             </svg>
-            <p className="text-[11px] leading-relaxed text-zinc-400">
-              Livo detected a{" "}
+            <p className="text-[13px] leading-relaxed text-zinc-400">
+              TrendLife Companion detected a{" "}
               <span className="font-medium text-amber-500">
                 financial concern
               </span>{" "}
@@ -1295,8 +1155,8 @@ export default function FamilyChat({
                 d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
               />
             </svg>
-            <p className="text-[11px] leading-relaxed text-zinc-400">
-              Livo detected a{" "}
+            <p className="text-[13px] leading-relaxed text-zinc-400">
+              TrendLife Companion detected a{" "}
               <span className="font-medium text-red-400">
                 new app install
               </span>{" "}
@@ -1306,7 +1166,7 @@ export default function FamilyChat({
               </span>{" "}
               above to start a conversation, or{" "}
               <span className="font-medium text-purple-400">
-                practice with Livo
+                practice with TrendLife
               </span>{" "}
               first. Each script includes Curator guidance notes.
             </p>
@@ -1315,7 +1175,7 @@ export default function FamilyChat({
 
         {messages.length === 0 && !isHighRisk && !empathyMode && !trendlifeMode && (
           <div className="flex h-full items-center justify-center">
-            <p className="text-xs text-zinc-600">
+            <p className="text-sm text-zinc-600">
               No active coaching session.
             </p>
           </div>
@@ -1336,14 +1196,14 @@ export default function FamilyChat({
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
               />
             </svg>
-            <p className="text-[11px] leading-relaxed text-zinc-400">
-              Livo detected a moment that needs care. Choose an{" "}
+            <p className="text-[13px] leading-relaxed text-zinc-400">
+              TrendLife Companion detected a moment that needs care. Choose an{" "}
               <span className="font-medium text-amber-400">
                 empathy-first script
               </span>{" "}
               above to start a conversation — or{" "}
               <span className="font-medium text-purple-400">
-                practice with Livo
+                practice with TrendLife
               </span>{" "}
               first.
             </p>
@@ -1365,14 +1225,14 @@ export default function FamilyChat({
                 d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"
               />
             </svg>
-            <p className="text-[11px] leading-relaxed text-zinc-400">
+            <p className="text-[13px] leading-relaxed text-zinc-400">
               Select a coaching script above, then press{" "}
               <span className="font-medium text-indigo-400">
                 Apply to Message
               </span>{" "}
               to populate the input — or click{" "}
               <span className="font-medium text-purple-400">
-                Practice with Livo
+                Practice with TrendLife
               </span>{" "}
               to rehearse your message first.
             </p>
@@ -1400,13 +1260,13 @@ export default function FamilyChat({
                       }`}>
                         {rpName.charAt(0)}
                       </span>
-                      <span className={`text-[9px] font-semibold uppercase tracking-wider ${
+                      <span className={`text-[11px] font-semibold uppercase tracking-wider ${
                         isElder ? "text-amber-400/70" : "text-purple-400/70"
                       }`}>
                         {rpName} (role-play)
                       </span>
                     </div>
-                    <p className="text-xs leading-relaxed">{msg.text}</p>
+                    <p className="text-smleading-relaxed">{msg.text}</p>
                   </div>
                 </div>
               );
@@ -1427,12 +1287,12 @@ export default function FamilyChat({
                     }`}
                   >
                     <div className="mb-1 flex items-center gap-1.5">
-                      <span className="text-[9px] font-semibold uppercase tracking-wider text-indigo-400/60">
-                        Livo&apos;s Feedback
+                      <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-400/60">
+                        TrendLife Feedback
                       </span>
                       {ratingStyle && (
                         <span
-                          className={`flex items-center gap-1 rounded-full border px-1.5 py-px text-[9px] font-medium ${ratingStyle.border} ${ratingStyle.text}`}
+                          className={`flex items-center gap-1 rounded-full border px-1.5 py-px text-[11px] font-medium ${ratingStyle.border} ${ratingStyle.text}`}
                         >
                           <span
                             className={`h-1.5 w-1.5 rounded-full ${ratingStyle.dot}`}
@@ -1441,7 +1301,7 @@ export default function FamilyChat({
                         </span>
                       )}
                     </div>
-                    <p className="text-xs leading-relaxed text-zinc-300">
+                    <p className="text-smleading-relaxed text-zinc-300">
                       {msg.text}
                     </p>
                   </div>
@@ -1465,13 +1325,13 @@ export default function FamilyChat({
                   }`}
                 >
                   {msg.role === "livo" && (
-                    <span className="mb-1 block text-[9px] font-semibold uppercase tracking-wider text-indigo-400/60">
-                      Livo
+                    <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wider text-indigo-400/60">
+                      TrendLife
                     </span>
                   )}
                   {msg.tone && (
                     <span
-                      className={`mb-1 mr-1 inline-block rounded-full border px-1.5 py-px text-[9px] font-medium ${
+                      className={`mb-1 mr-1 inline-block rounded-full border px-1.5 py-px text-[11px] font-medium ${
                         TONE_COLORS[msg.tone] ??
                         "border-zinc-500/30 bg-zinc-500/15 text-zinc-400"
                       }`}
@@ -1479,7 +1339,7 @@ export default function FamilyChat({
                       {msg.tone}
                     </span>
                   )}
-                  <p className="text-xs leading-relaxed">{msg.text}</p>
+                  <p className="text-smleading-relaxed">{msg.text}</p>
                 </div>
               </div>
             );
@@ -1504,7 +1364,7 @@ export default function FamilyChat({
                     }`}>
                       {rpName.charAt(0)}
                     </span>
-                    <span className={`text-[9px] ${isElder ? "text-amber-400/60" : "text-purple-400/60"}`}>
+                    <span className={`text-[11px] ${isElder ? "text-amber-400/60" : "text-purple-400/60"}`}>
                       {rpName} is typing
                     </span>
                     <span className="flex gap-0.5">
@@ -1556,7 +1416,7 @@ export default function FamilyChat({
                           ? "Type or apply a coaching script..."
                           : "Type a message..."
               }
-              className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-2 pl-8 text-xs text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-indigo-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
+              className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-2 pl-8 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-indigo-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
             />
             <svg
               className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-600"
@@ -1593,7 +1453,7 @@ export default function FamilyChat({
           </button>
         </div>
         {selectedIdx !== null && !practiceMode && (
-          <p className="mt-1 text-[10px] text-indigo-400/60">
+          <p className="mt-1 text-xs text-indigo-400/60">
             <span className="font-medium">{scripts[selectedIdx]?.tone}</span>{" "}
             script applied &middot;{" "}
             <button
@@ -1608,8 +1468,8 @@ export default function FamilyChat({
           </p>
         )}
         {practiceMode && !practicing && (
-          <p className={`mt-1 text-[10px] ${mediatorMode ? "text-amber-400/60" : "text-purple-400/60"}`}>
-            Practice mode &middot; Livo is role-playing as{" "}
+          <p className={`mt-1 text-xs ${mediatorMode ? "text-amber-400/60" : "text-purple-400/60"}`}>
+            Practice mode &middot; TrendLife is role-playing as{" "}
             <span className="font-medium">{mediatorMode ? elderName : childName}</span>
             {mediatorMode && (
               <span className="ml-1 text-amber-500/50">&middot; Respect &amp; Honor</span>

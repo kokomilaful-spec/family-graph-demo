@@ -42,9 +42,9 @@ export default function CommandBar({ onCommand }: CommandBarProps) {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask Livo... e.g. 'Order dinner'"
+            placeholder="Ask TrendLife... e.g. 'Order dinner'"
             disabled={loading}
-            className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-2 pl-8 text-xs text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-indigo-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
+            className="w-full rounded-lg border border-zinc-700/60 bg-zinc-800/50 px-3 py-2 pl-8 text-sm text-zinc-200 placeholder-zinc-600 outline-none transition-colors focus:border-indigo-500/50 focus:bg-zinc-800/80 disabled:opacity-50"
           />
           {/* Sparkle icon */}
           <svg
@@ -79,7 +79,7 @@ export default function CommandBar({ onCommand }: CommandBarProps) {
         </button>
       </form>
       {error && (
-        <p className="mt-1.5 text-[10px] text-red-400">{error}</p>
+        <p className="mt-1.5 text-xs text-red-400">{error}</p>
       )}
     </div>
   );

@@ -123,29 +123,29 @@ export function LivoRewardCard({ reward, onCelebrate, onDismiss }: LivoRewardCar
         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-yellow-500/10 text-xs">
           🎊
         </span>
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-yellow-400/70">
-          Livo Reward
+        <span className="text-xs font-semibold uppercase tracking-wider text-yellow-400/70">
+          TrendLife Reward
         </span>
       </div>
-      <p className="mb-1 text-xs leading-relaxed text-zinc-300">
+      <p className="mb-1 text-smleading-relaxed text-zinc-300">
         {reward.event.description}
       </p>
-      <p className="mb-2 text-xs leading-relaxed text-yellow-300/80">
+      <p className="mb-2 text-smleading-relaxed text-yellow-300/80">
         💡 {reward.suggestion}
       </p>
-      <p className="mb-2 text-[10px] text-zinc-500">
+      <p className="mb-2 text-xs text-zinc-500">
         {reward.memberLabels.join(", ")}
       </p>
       <div className="flex gap-2">
         <button
           onClick={onCelebrate}
-          className="rounded-md border border-yellow-500/20 bg-yellow-500/10 px-2.5 py-1 text-[11px] font-medium text-yellow-400 transition-colors hover:bg-yellow-500/20"
+          className="rounded-md border border-yellow-500/20 bg-yellow-500/10 px-2.5 py-1 text-[13px] font-medium text-yellow-400 transition-colors hover:bg-yellow-500/20"
         >
           Celebrate! 🎉
         </button>
         <button
           onClick={onDismiss}
-          className="rounded-md border border-white/[0.06] px-2.5 py-1 text-[11px] text-zinc-500 transition-colors hover:text-zinc-400"
+          className="rounded-md border border-white/[0.06] px-2.5 py-1 text-[13px] text-zinc-500 transition-colors hover:text-zinc-400"
         >
           Dismiss
         </button>

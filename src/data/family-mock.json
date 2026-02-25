@@ -32,7 +32,7 @@
 
     { "id": "r-tech-free", "type": "house_rule", "label": "Tech-Free After 10PM", "trigger": "time", "condition": "after 10:00 PM", "action": "disable device access", "riskLevel": "low", "visibility": "family" },
 
-    { "id": "doc-gold-fund", "type": "document", "label": "15% Gold Fund", "docType": "financial", "riskLevel": "high", "visibility": "guarded" }
+    { "id": "doc-gold-fund", "type": "document", "label": "Suspicious Investment Group", "docType": "financial", "riskLevel": "high", "visibility": "guarded" }
   ],
   "edges": [
     { "id": "e1", "source": "m-dad", "target": "m-mom", "relation": "spouse_of", "weight": 5 },
@@ -80,7 +80,7 @@
 
     { "id": "e19", "source": "r-tech-free", "target": "d-ipad", "relation": "applies_to", "label": "Rule applies to iPad" },
 
-    { "id": "e35", "source": "m-grandma", "target": "doc-gold-fund", "relation": "authored", "label": "Grandma researching gold fund" }
+    { "id": "e35", "source": "m-grandma", "target": "doc-gold-fund", "relation": "authored", "label": "Grandma joined suspicious investment group" }
   ],
   "synapseEvents": [
     { "id": "se-1", "description": "Family hiked together at Yangmingshan", "impact": "Positive", "intensity": 4, "involvedMembers": ["m-dad", "m-mom", "m-daughter", "m-son"], "timestamp": "2026-02-22T10:00:00Z" },
@@ -90,6 +90,6 @@
     { "id": "se-5", "description": "Tech-Free rule triggered but was ignored", "impact": "Negative", "intensity": 2, "involvedMembers": ["m-daughter", "m-son"], "timestamp": "2026-02-23T22:15:00Z" },
     { "id": "se-6", "description": "Dad updated the weekly grocery list", "impact": "Neutral", "intensity": 1, "involvedMembers": ["m-dad"], "timestamp": "2026-02-24T09:00:00Z" },
     { "id": "se-7", "description": "Mom and Daughter baked cookies together", "impact": "Positive", "intensity": 4, "involvedMembers": ["m-mom", "m-daughter"], "timestamp": "2026-02-23T14:00:00Z" },
-    { "id": "se-8", "description": "Grandma researching a 15% gold fund with unverified credentials", "impact": "Negative", "intensity": 4, "involvedMembers": ["m-grandma", "m-dad"], "timestamp": "2026-02-24T11:00:00Z" }
+    { "id": "se-8", "description": "Grandma joined a suspicious investment group promising high returns", "impact": "Negative", "intensity": 4, "involvedMembers": ["m-grandma", "m-dad"], "timestamp": "2026-02-24T11:00:00Z" }
   ]
 }

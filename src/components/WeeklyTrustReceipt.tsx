@@ -205,13 +205,13 @@ export default function WeeklyTrustReceipt({
           </svg>
         </div>
         <div className="min-w-0 flex-1">
-          <span className="text-sm font-semibold text-zinc-200">
+          <span className="text-base font-semibold text-zinc-200">
             Weekly Trust Receipt
           </span>
-          <p className="text-[10px] text-zinc-600">{metrics.weekLabel}</p>
+          <p className="text-xs text-zinc-600">{metrics.weekLabel}</p>
         </div>
-        <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-medium text-emerald-400">
-          Livo
+        <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-xs font-medium text-emerald-400">
+          TrendLife
         </span>
         <button
           onClick={onClose}
@@ -227,17 +227,17 @@ export default function WeeklyTrustReceipt({
       <div className="border-b border-white/[0.06] px-4 py-4">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
               Family Bond Score
             </p>
             <p className={`mt-1 text-3xl font-bold tabular-nums ${scoreColor}`}>
               {metrics.familyBondScore}
-              <span className="text-sm font-normal text-zinc-600">/100</span>
+              <span className="text-base font-normal text-zinc-600">/100</span>
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[10px] text-zinc-600">This week</p>
-            <p className="text-[10px] text-emerald-400/70">
+            <p className="text-xs text-zinc-600">This week</p>
+            <p className="text-xs text-emerald-400/70">
               {metrics.positiveEvents} positive &middot; {metrics.negativeEvents} handled
             </p>
           </div>
@@ -274,11 +274,11 @@ export default function WeeklyTrustReceipt({
               <span className="text-lg font-bold text-lime-400 tabular-nums">
                 {metrics.scholarRedirects}
               </span>
-              <span className="text-xs text-zinc-400">
+              <span className="text-sm text-zinc-400">
                 Learning Shortcuts Redirected
               </span>
             </div>
-            <p className="mt-0.5 text-[10px] text-zinc-600">
+            <p className="mt-0.5 text-xs text-zinc-600">
               ScholarFilter: Homework requests redirected to understanding
             </p>
           </div>
@@ -289,7 +289,7 @@ export default function WeeklyTrustReceipt({
             {metrics.scholarDetails.map((detail) => (
               <span
                 key={detail}
-                className="rounded-full border border-lime-500/20 bg-lime-500/[0.06] px-2 py-0.5 text-[10px] text-lime-400/80"
+                className="rounded-full border border-lime-500/20 bg-lime-500/[0.06] px-2 py-0.5 text-xs text-lime-400/80"
               >
                 {detail}
               </span>
@@ -321,12 +321,12 @@ export default function WeeklyTrustReceipt({
               <span className="text-lg font-bold text-amber-400 tabular-nums">
                 {metrics.scamsIntercepted}
               </span>
-              <span className="text-xs text-zinc-400">
+              <span className="text-sm text-zinc-400">
                 Financial Scams Intercepted
               </span>
             </div>
-            <p className="mt-0.5 text-[10px] text-zinc-600">
-              LivoMediator: Elder financial risks handled with Respect &amp; Honor
+            <p className="mt-0.5 text-xs text-zinc-600">
+              TrendLife Companion: Elder financial risks handled with Respect &amp; Honor
             </p>
           </div>
         </div>
@@ -339,7 +339,7 @@ export default function WeeklyTrustReceipt({
                 className="flex items-center gap-1.5 rounded-md border border-amber-500/15 bg-amber-500/[0.04] px-2 py-1.5"
               >
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
-                <span className="text-[10px] leading-snug text-zinc-300">
+                <span className="text-xs leading-snug text-zinc-300">
                   {detail}
                 </span>
               </div>
@@ -350,11 +350,11 @@ export default function WeeklyTrustReceipt({
 
       {/* Top Moment */}
       <div className="px-4 py-3">
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
           Top Family Moment
         </p>
         <div className="mt-1.5 rounded-lg border border-emerald-500/15 bg-emerald-500/[0.04] px-3 py-2">
-          <p className="text-xs leading-relaxed text-zinc-300">
+          <p className="text-smleading-relaxed text-zinc-300">
             {metrics.topMoment}
           </p>
         </div>
@@ -362,33 +362,33 @@ export default function WeeklyTrustReceipt({
         {/* Mini event breakdown */}
         <div className="mt-3 grid grid-cols-3 gap-2">
           <div className="rounded-lg bg-emerald-500/[0.06] px-2 py-1.5 text-center">
-            <p className="text-sm font-bold text-emerald-400 tabular-nums">
+            <p className="text-base font-bold text-emerald-400 tabular-nums">
               {metrics.positiveEvents}
             </p>
-            <p className="text-[9px] text-zinc-600">Positive</p>
+            <p className="text-[11px] text-zinc-600">Positive</p>
           </div>
           <div className="rounded-lg bg-red-500/[0.06] px-2 py-1.5 text-center">
-            <p className="text-sm font-bold text-red-400 tabular-nums">
+            <p className="text-base font-bold text-red-400 tabular-nums">
               {metrics.negativeEvents}
             </p>
-            <p className="text-[9px] text-zinc-600">Handled</p>
+            <p className="text-[11px] text-zinc-600">Handled</p>
           </div>
           <div className="rounded-lg bg-indigo-500/[0.06] px-2 py-1.5 text-center">
-            <p className="text-sm font-bold text-indigo-400 tabular-nums">
+            <p className="text-base font-bold text-indigo-400 tabular-nums">
               {(mockData as FamilyGraphData).nodes.filter((n) => n.type === "member").length}
             </p>
-            <p className="text-[9px] text-zinc-600">Members</p>
+            <p className="text-[11px] text-zinc-600">Members</p>
           </div>
         </div>
 
-        {/* Livo signature */}
+        {/* TrendLife signature */}
         <div className="mt-3 flex items-center gap-1.5 rounded-md bg-indigo-500/[0.04] px-2.5 py-2">
           <div className="h-2 w-2 rounded-full bg-indigo-400/60" />
-          <p className="text-[10px] italic text-zinc-500">
+          <p className="text-xs italic text-zinc-500">
             &ldquo;Trust is built one redirected shortcut at a time. Keep going, family.&rdquo;
           </p>
-          <span className="ml-auto text-[9px] text-indigo-400/50">
-            &mdash; Livo
+          <span className="ml-auto text-[11px] text-indigo-400/50">
+            &mdash; TrendLife
           </span>
         </div>
       </div>

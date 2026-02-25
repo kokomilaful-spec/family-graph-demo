@@ -184,17 +184,23 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#BEB5DA" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7 7 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a7 7 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a7 7 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.991a7 7 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         Graph Settings
       </div>
-      <div class="setting-group">
-        <div class="setting-label">Viewing As</div>
-        <select id="viewerSelect" class="setting-select">
-          <option value="m-grandpa">Grandpa (Grandparent)</option>
-          <option value="m-grandma">Grandma (Grandparent)</option>
-          <option value="m-dad" selected>Dad (Parent)</option>
-          <option value="m-mom">Mom (Parent)</option>
-          <option value="m-daughter">Daughter (Child)</option>
-          <option value="m-son">Son (Child)</option>
-          <option value="m-caregiver">Foreign Caregiver</option>
-        </select>
+      <div class="setting-group" style="padding:12px 16px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="viewerAvatar" style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,rgba(162,150,200,.3),rgba(190,181,218,.3));color:#BEB5DA;font-size:14px;font-weight:700;flex-shrink:0">D</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(190,181,218,.7);margin-bottom:3px">Viewing As</div>
+            <select id="viewerSelect" style="width:100%;background:rgba(162,150,200,.1);border:1px solid rgba(162,150,200,.3);border-radius:8px;padding:5px 8px;color:#F7F1E8;font-size:12px;font-weight:500;outline:none">
+              <option value="m-grandpa">Grandpa (Grandparent)</option>
+              <option value="m-grandma">Grandma (Grandparent)</option>
+              <option value="m-dad" selected>Dad (Parent)</option>
+              <option value="m-mom">Mom (Parent)</option>
+              <option value="m-daughter">Daughter (Child)</option>
+              <option value="m-son">Son (Child)</option>
+              <option value="m-caregiver">Foreign Caregiver</option>
+            </select>
+          </div>
+        </div>
+        <p style="margin-top:8px;font-size:10px;color:#7A9AAB;line-height:1.4">Controls which nodes you can see based on family privacy settings</p>
       </div>
       <div class="setting-group">
         <div class="setting-label">Node Types</div>
@@ -1878,7 +1884,7 @@ window.addEventListener("mouseup",()=>{
 });
 
 // Settings handlers
-document.getElementById("viewerSelect").addEventListener("change",e=>{S.viewerId=e.target.value;rebuildGraph()});
+document.getElementById("viewerSelect").addEventListener("change",e=>{S.viewerId=e.target.value;const vn=ALL_NODES.find(n=>n.id===S.viewerId);document.getElementById("viewerAvatar").textContent=(vn?.label??"?").charAt(0);rebuildGraph()});
 ["member","preference","device","document","health","house_rule"].forEach(t=>{
   document.getElementById("t-"+t).addEventListener("change",e=>{S.visibleTypes[t]=e.target.checked;rebuildGraph()});
 });

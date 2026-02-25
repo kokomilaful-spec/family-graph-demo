@@ -18,7 +18,7 @@ const PracticeResponseSchema = z.object({
   feedback: z
     .string()
     .describe(
-      "Livo's coaching feedback on the parent's message. " +
+      "TrendLife Companion's coaching feedback on the parent's message. " +
         "1-2 sentences. Constructive and specific — highlight what worked " +
         "or what could be improved in tone, phrasing, or approach."
     ),
@@ -53,7 +53,7 @@ const ElderPracticeResponseSchema = z.object({
   feedback: z
     .string()
     .describe(
-      "Livo's coaching feedback on the parent's message. " +
+      "TrendLife Companion's coaching feedback on the parent's message. " +
         "1-2 sentences. Focus on the respect-vs-control spectrum: " +
         "Did it treat the elder as an expert or as a problem? " +
         "Specific, constructive, Respect & Honor framework."
@@ -147,7 +147,7 @@ export async function practiceWithGrandma(
     : "(This is the opening message — no prior exchanges.)";
 
   try {
-    const systemPrompt = `You are Livo, a Trendlife Curator using the Respect & Honor framework. You have TWO jobs:
+    const systemPrompt = `You are TrendLife Companion, a Family Curator using the Respect & Honor framework. You have TWO jobs:
 
 JOB 1 — ROLE-PLAY as ${elderName} (age ${elderAge}).
 Respond to the parent's message AS ${elderName} would realistically respond.
@@ -248,7 +248,7 @@ export async function practiceWithLivo(
         .join("\n")
     : "(This is the opening message — no prior exchanges.)";
 
-  const systemPrompt = `You are Livo, a Trendlife Curator. You have TWO jobs in this interaction:
+  const systemPrompt = `You are TrendLife Companion, a Family Curator. You have TWO jobs in this interaction:
 
 JOB 1 — ROLE-PLAY as ${childName} (age ${childAge}).
 Respond to the ${userRole}'s message AS ${childName} would realistically respond.
