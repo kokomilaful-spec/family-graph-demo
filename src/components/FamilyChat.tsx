@@ -303,9 +303,21 @@ export default function FamilyChat({
     [viewerRole]
   );
 
+  // Resolve whether a pre-built script mode is active (mediator or trendlife)
+  const hasPrebuiltScripts = mediatorMode || trendlifeMode;
+
   useEffect(() => {
-    if (coachNodeId && isHighRisk) {
+    if (coachNodeId && isHighRisk && !hasPrebuiltScripts) {
       fetchScripts(coachNodeId);
+      setMessages([]);
+      setInputValue("");
+      setPracticeMode(false);
+      setPracticeHistory([]);
+    } else if (coachNodeId && isHighRisk && hasPrebuiltScripts) {
+      // Pre-built scripts handle their own UI — just reset chat state
+      setScripts([]);
+      setError(null);
+      setSelectedIdx(null);
       setMessages([]);
       setInputValue("");
       setPracticeMode(false);
@@ -317,7 +329,7 @@ export default function FamilyChat({
       setPracticeMode(false);
       setPracticeHistory([]);
     }
-  }, [coachNodeId, isHighRisk, fetchScripts]);
+  }, [coachNodeId, isHighRisk, hasPrebuiltScripts, fetchScripts]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -525,7 +537,7 @@ export default function FamilyChat({
       className="fixed bottom-6 right-6 z-50 flex w-[420px] animate-[slideUp_0.3s_ease-out] flex-col rounded-2xl border border-white/[0.08] shadow-2xl shadow-black/50"
       style={{
         maxHeight: "min(640px, calc(100vh - 80px))",
-        background: "rgba(15,15,22,0.8)",
+        background: "rgba(20,40,55,0.8)",
         backdropFilter: "blur(24px) saturate(1.4)",
         WebkitBackdropFilter: "blur(24px) saturate(1.4)",
       }}
@@ -542,9 +554,9 @@ export default function FamilyChat({
           {mediatorMode && mediatorAlert ? (
             <p className="truncate text-xs text-zinc-500">
               Respect &amp; Honor &middot;{" "}
-              <span className="text-amber-500">{mediatorAlert.elderLabel}</span>
-              {" \u2192 "}
               <span className="text-zinc-400">{mediatorAlert.parentLabel}</span>
+              {" \u2192 "}
+              <span className="text-amber-500">{mediatorAlert.elderLabel}</span>
             </p>
           ) : trendlifeMode && highRiskAlert ? (
             <p className="truncate text-xs text-zinc-500">

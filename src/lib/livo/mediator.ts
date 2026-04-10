@@ -83,15 +83,15 @@ export function livo_mediator(
       );
     if (!elderNode) continue;
 
-    // Find a parent to coach — prefer one already involved in the event
-    const involvedParent = event.involvedMembers
+    // Find a family member to coach — prefer one already involved in the event (excluding the elder)
+    const involvedMember = event.involvedMembers
       .map((id) => nodes.find((n) => n.id === id))
       .find(
-        (n) => n && n.type === "member" && "role" in n && n.role === "parent",
+        (n) => n && n.type === "member" && n.id !== elderNode.id,
       );
 
     const anyParent =
-      involvedParent ??
+      involvedMember ??
       nodes.find(
         (n) => n.type === "member" && "role" in n && n.role === "parent",
       );
@@ -135,27 +135,27 @@ export function livo_mediator(
 
 function buildRespectHonorScripts(
   elderName: string,
-  parentName: string,
+  memberName: string,
   eventDesc: string,
 ): RespectHonorScript[] {
   return [
     {
       tone: "Respect & Honor",
-      message: `Mom, I heard you joined an investment group? I don't know much about investing — could you teach me how to evaluate it?`,
+      message: `${elderName}, I heard you joined an investment group? I don't know much about investing — could you teach me how to evaluate it?`,
       followUp: `How did you find that group? What do they discuss?`,
-      livoNote: `Let ${elderName} be the teacher, not the accused. Asking "teach me" works far better than saying "you got scammed."`,
+      livoNote: `Let ${elderName} be the teacher, not the accused. Asking "teach me" works far better than saying "you got scammed." ${memberName} can learn something real while keeping ${elderName} safe.`,
     },
     {
       tone: "Curiosity & Admiration",
-      message: `Mom, that group sounds interesting — can we look into it together? I'd love to learn from you.`,
+      message: `${elderName}, that group sounds interesting — can we look into it together? I'd love to learn from you.`,
       followUp: `Has anyone in the group actually made money? We could check together.`,
-      livoNote: `Turn the conversation into learning together, not intervening. ${elderName} is more open when she feels respected.`,
+      livoNote: `Turn the conversation into learning together, not confronting. ${elderName} is more open when she feels respected. ${memberName} showing genuine interest builds trust.`,
     },
     {
       tone: "Family Partnership",
-      message: `Mom, family finances affect all of us — can we look into this group together?`,
+      message: `${elderName}, family finances affect all of us — can we look into this group together? I want to make sure we're all protected.`,
       followUp: `Let's make a checklist: Is the firm registered? What are the fees? Are the returns too high?`,
-      livoNote: `Turn verification into a family activity. ${elderName} keeps the lead, and ${parentName} stays informed.`,
+      livoNote: `Turn verification into a family activity. ${elderName} keeps the lead, and ${memberName} stays informed. This builds a safety net without undermining ${elderName}'s autonomy.`,
     },
   ];
 }

@@ -7,12 +7,12 @@ const data = mockData as FamilyGraphData;
 const members = data.nodes.filter((n): n is MemberNode => n.type === "member");
 
 const NODE_TYPE_COLORS: Record<NodeType, string> = {
-  member: "#3b82f6",
-  preference: "#f59e0b",
-  device: "#8b5cf6",
-  document: "#10b981",
-  health: "#ef4444",
-  house_rule: "#06b6d4",
+  member: "#2d7e8a",
+  preference: "#e8b830",
+  device: "#bab3d5",
+  event: "#6ab8c5",
+  health: "#e05858",
+  house_rule: "#e88040",
 };
 
 // ─── Collapsible Section ────────────────────────────────────
@@ -133,10 +133,10 @@ interface GraphSettingsProps {
 
 export const DEFAULT_SETTINGS: GraphSettingsState = {
   selectedId: null,
-  viewerId: "m-dad",
+  viewerId: "m-son",
   showUnconnected: true,
   showLeafNodes: true,
-  visibleTypes: { member: true, preference: false, device: true, document: true, health: true, house_rule: true },
+  visibleTypes: { member: true, preference: false, device: true, event: true, health: true, house_rule: true },
   nodeSpacing: 50,
   linkLength: 50,
   linkForce: 50,

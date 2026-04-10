@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1a3040;
+  --foreground: #f5efe6;
 }
 
 @theme inline {
@@ -10,12 +10,82 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ── Brand palette overrides ─────────────────────────────── */
+  /* Remap Tailwind default palettes to match brand colors     */
+
+  /* Primary accent: indigo → Dark Teal / Light Teal           */
+  --color-indigo-600: #236a75;
+  --color-indigo-500: #2d7e8a;
+  --color-indigo-400: #4a9eaa;
+  --color-indigo-300: #6ab8c5;
+  --color-indigo-200: #90d0da;
+
+  /* Success / positive: emerald → Light Teal                  */
+  --color-emerald-600: #2d7e8a;
+  --color-emerald-500: #3a9aa6;
+  --color-emerald-400: #6ab8c5;
+  --color-emerald-300: #b5ddf0;
+
+  /* Error / risk: red → Coral / Brand Red                     */
+  --color-red-600: #b83030;
+  --color-red-500: #c23a33;
+  --color-red-400: #e05858;
+  --color-red-300: #e87878;
+
+  /* Warning: amber → Orange / Yellow                          */
+  --color-amber-600: #d07030;
+  --color-amber-500: #e88040;
+  --color-amber-400: #e8b830;
+  --color-amber-300: #f0d060;
+
+  /* Device / accent: purple → Lilac                           */
+  --color-purple-600: #9a90c0;
+  --color-purple-500: #bab3d5;
+  --color-purple-400: #c8c3e0;
+  --color-purple-300: #d8d3ea;
+
+  /* Soft accent: rose → Pink                                  */
+  --color-rose-500: #e05858;
+  --color-rose-400: #f0b0b8;
+  --color-rose-300: #f5c8cc;
+
+  /* Blue (member nodes): → Dark Teal                          */
+  --color-blue-600: #236a75;
+  --color-blue-500: #2d7e8a;
+  --color-blue-400: #6ab8c5;
+  --color-blue-300: #b5ddf0;
+
+  /* Teal (explicit): brand teal                               */
+  --color-teal-600: #236a75;
+  --color-teal-500: #2d7e8a;
+  --color-teal-400: #6ab8c5;
+  --color-teal-300: #b5ddf0;
+
+  /* Cyan: align with brand teal                               */
+  --color-cyan-500: #2d7e8a;
+  --color-cyan-400: #6ab8c5;
+
+  /* Yellow (gold): brand yellow                               */
+  --color-yellow-500: #e8b830;
+  --color-yellow-400: #f0cc50;
+
+  /* Zinc: warm-shift toward cream                             */
+  --color-zinc-100: #f5efe6;
+  --color-zinc-200: #e0d8cc;
+  --color-zinc-300: #c8c0b4;
+  --color-zinc-400: #a09888;
+  --color-zinc-500: #78706a;
+  --color-zinc-600: #58524c;
+  --color-zinc-700: #3a3530;
+  --color-zinc-800: #28241f;
+  --color-zinc-900: #1a1714;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1a3040;
+    --foreground: #f5efe6;
   }
 }
 
@@ -27,28 +97,28 @@ body {
 
 /* ── Glassmorphism shared panel style ── */
 .glass-panel {
-  background: rgba(15, 15, 22, 0.55);
+  background: rgba(20, 40, 55, 0.6);
   backdrop-filter: blur(20px) saturate(1.3);
   -webkit-backdrop-filter: blur(20px) saturate(1.3);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+    inset 0 1px 0 rgba(245, 239, 230, 0.04),
+    inset 0 0 0 1px rgba(245, 239, 230, 0.02);
 }
 
 /* ── Glassmorphism tooltip for graph nodes ── */
 .graph-tooltip {
-  background: rgba(15, 15, 22, 0.65) !important;
+  background: rgba(20, 40, 55, 0.75) !important;
   backdrop-filter: blur(16px) saturate(1.4) !important;
   -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(245, 239, 230, 0.08) !important;
   border-radius: 12px !important;
   padding: 0 !important;
-  color: #e4e4e7 !important;
+  color: #f5efe6 !important;
   font-family: system-ui, -apple-system, sans-serif !important;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    0 1px 0 rgba(255, 255, 255, 0.06) inset !important;
+    0 0 0 1px rgba(245, 239, 230, 0.04) inset,
+    0 1px 0 rgba(245, 239, 230, 0.06) inset !important;
   max-width: 220px !important;
   pointer-events: none !important;
 }

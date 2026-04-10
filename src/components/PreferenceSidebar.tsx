@@ -35,36 +35,36 @@ const CATEGORIES: CategoryDef[] = [
     key: "diet",
     label: "Diet",
     icon: <UtensilsCrossed size={14} />,
-    color: "#f59e0b",
-    bgClass: "rgba(245,158,11,0.1)",
+    color: "#e8b830",
+    bgClass: "rgba(232,184,48,0.1)",
   },
   {
     key: "activity",
     label: "Activity",
     icon: <Footprints size={14} />,
-    color: "#3b82f6",
-    bgClass: "rgba(59,130,246,0.1)",
+    color: "#2d7e8a",
+    bgClass: "rgba(45,126,138,0.1)",
   },
   {
     key: "tech",
     label: "Tech",
     icon: <Smartphone size={14} />,
-    color: "#8b5cf6",
-    bgClass: "rgba(139,92,246,0.1)",
+    color: "#bab3d5",
+    bgClass: "rgba(186,179,213,0.1)",
   },
   {
     key: "health",
     label: "Health",
     icon: <Heart size={14} />,
-    color: "#10b981",
-    bgClass: "rgba(16,185,129,0.1)",
+    color: "#6ab8c5",
+    bgClass: "rgba(106,184,197,0.1)",
   },
 ];
 
 const FOCUS_META: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  diet: { label: "Dietary Preferences", icon: <UtensilsCrossed size={14} />, color: "#f59e0b" },
-  activity: { label: "Activity Preferences", icon: <Footprints size={14} />, color: "#3b82f6" },
-  tech: { label: "Devices", icon: <Smartphone size={14} />, color: "#8b5cf6" },
+  diet: { label: "Dietary Preferences", icon: <UtensilsCrossed size={14} />, color: "#e8b830" },
+  activity: { label: "Activity Preferences", icon: <Footprints size={14} />, color: "#2d7e8a" },
+  tech: { label: "Devices", icon: <Smartphone size={14} />, color: "#bab3d5" },
 };
 
 // ─── Sentiment display ───────────────────────────────────────
@@ -236,7 +236,7 @@ export default function PreferenceSidebar({
         isOpen ? "w-64 opacity-100" : "w-0 opacity-0"
       } ${isFocusMode ? "border-amber-500/20" : "border-white/[0.06]"}`}
       style={{
-        background: "rgba(15,15,22,0.55)",
+        background: "rgba(20,40,55,0.55)",
         backdropFilter: "blur(20px) saturate(1.3)",
         WebkitBackdropFilter: "blur(20px) saturate(1.3)",
         boxShadow:

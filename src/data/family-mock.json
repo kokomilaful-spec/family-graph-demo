@@ -5,7 +5,7 @@
     { "id": "m-daughter", "type": "member", "label": "Daughter", "role": "child", "gender": "female", "age": 12, "riskLevel": "low", "visibility": "family" },
     { "id": "m-son", "type": "member", "label": "Son", "role": "child", "gender": "male", "age": 8, "riskLevel": "low", "visibility": "family" },
     { "id": "m-grandpa", "type": "member", "label": "Grandpa", "role": "grandparent", "gender": "male", "age": 72, "riskLevel": "low", "visibility": "family" },
-    { "id": "m-grandma", "type": "member", "label": "Grandma", "role": "grandparent", "gender": "female", "age": 68, "riskLevel": "low", "visibility": "family", "healthTags": ["Diabetes", "Low-Salt Diet"] },
+    { "id": "m-grandma", "type": "member", "label": "Grandma", "role": "grandparent", "gender": "female", "age": 68, "riskLevel": "high", "visibility": "family", "healthTags": ["Diabetes", "Low-Salt Diet"] },
     { "id": "m-caregiver", "type": "member", "label": "Foreign Caregiver", "role": "caregiver", "gender": "female", "age": 35, "riskLevel": "low", "visibility": "family", "adminLevel": "secondary" },
 
     { "id": "p-no-meat", "type": "preference", "label": "No Meat", "category": "food", "sentiment": "avoids", "riskLevel": "low", "visibility": "family" },
@@ -22,17 +22,17 @@
     { "id": "d-ipad", "type": "device", "label": "iPad", "platform": "Apple", "os": "iPadOS", "riskLevel": "low", "visibility": "family" },
     { "id": "d-laptop", "type": "device", "label": "Laptop", "platform": "Apple", "os": "macOS", "riskLevel": "low", "visibility": "family" },
 
-    { "id": "doc-grocery", "type": "document", "label": "Weekly Grocery List", "docType": "list", "riskLevel": "low", "visibility": "family" },
-    { "id": "doc-soup-recipe", "type": "document", "label": "Grandma's Soup Recipe", "docType": "recipe", "riskLevel": "low", "visibility": "family" },
-    { "id": "doc-family-budget", "type": "document", "label": "Family Budget", "docType": "financial", "riskLevel": "low", "visibility": "guarded" },
+    { "id": "doc-grocery", "type": "event", "label": "Weekly Grocery List", "docType": "list", "riskLevel": "low", "visibility": "family" },
+    { "id": "doc-soup-recipe", "type": "event", "label": "Grandma's Soup Recipe", "docType": "recipe", "riskLevel": "low", "visibility": "family" },
+    { "id": "doc-family-budget", "type": "event", "label": "Family Budget", "docType": "financial", "riskLevel": "low", "visibility": "guarded" },
 
     { "id": "d-suspicious-app", "type": "device", "label": "Suspicious App", "platform": "Unknown", "os": "Android", "riskLevel": "high", "visibility": "private" },
-    { "id": "doc-vibe-coding", "type": "document", "label": "Vibe Coding Project", "docType": "project", "riskLevel": "low", "visibility": "family", "isAchievement": true },
-    { "id": "doc-private-chat", "type": "document", "label": "Private Chat", "docType": "note", "riskLevel": "low", "visibility": "private" },
+    { "id": "doc-vibe-coding", "type": "event", "label": "Vibe Coding Project", "docType": "project", "riskLevel": "low", "visibility": "family", "isAchievement": true },
+    { "id": "doc-private-chat", "type": "event", "label": "Private Chat", "docType": "note", "riskLevel": "low", "visibility": "private" },
 
     { "id": "r-tech-free", "type": "house_rule", "label": "Tech-Free After 10PM", "trigger": "time", "condition": "after 10:00 PM", "action": "disable device access", "riskLevel": "low", "visibility": "family" },
 
-    { "id": "doc-gold-fund", "type": "document", "label": "Suspicious Investment Group", "docType": "financial", "riskLevel": "high", "visibility": "guarded" }
+    { "id": "doc-gold-fund", "type": "event", "label": "Suspicious Investment Group", "docType": "financial", "riskLevel": "high", "visibility": "guarded" }
   ],
   "edges": [
     { "id": "e1", "source": "m-dad", "target": "m-mom", "relation": "spouse_of", "weight": 5 },
@@ -90,6 +90,6 @@
     { "id": "se-5", "description": "Tech-Free rule triggered but was ignored", "impact": "Negative", "intensity": 2, "involvedMembers": ["m-daughter", "m-son"], "timestamp": "2026-02-23T22:15:00Z" },
     { "id": "se-6", "description": "Dad updated the weekly grocery list", "impact": "Neutral", "intensity": 1, "involvedMembers": ["m-dad"], "timestamp": "2026-02-24T09:00:00Z" },
     { "id": "se-7", "description": "Mom and Daughter baked cookies together", "impact": "Positive", "intensity": 4, "involvedMembers": ["m-mom", "m-daughter"], "timestamp": "2026-02-23T14:00:00Z" },
-    { "id": "se-8", "description": "Grandma joined a suspicious investment group promising high returns", "impact": "Negative", "intensity": 4, "involvedMembers": ["m-grandma", "m-dad"], "timestamp": "2026-02-24T11:00:00Z" }
+    { "id": "se-8", "description": "Grandma joined a suspicious investment group promising high returns", "impact": "Negative", "intensity": 5, "involvedMembers": ["m-grandma", "m-son"], "timestamp": "2026-02-24T11:00:00Z" }
   ]
 }

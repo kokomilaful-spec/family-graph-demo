@@ -1,6 +1,6 @@
 // ─── Shared Fields ──────────────────────────────────────────
 
-export type NodeType = "member" | "preference" | "device" | "document" | "house_rule" | "health";
+export type NodeType = "member" | "preference" | "device" | "event" | "house_rule" | "health";
 export type RiskLevel = "low" | "medium" | "high";
 export type Visibility = "private" | "family" | "guarded" | "health_only";
 
@@ -36,8 +36,8 @@ export interface DeviceNode extends BaseNode {
   os?: string;
 }
 
-export interface DocumentNode extends BaseNode {
-  type: "document";
+export interface EventNode extends BaseNode {
+  type: "event";
   docType: "recipe" | "schedule" | "note" | "list" | "project" | "financial";
   url?: string;
 }
@@ -59,7 +59,7 @@ export type FamilyNode =
   | MemberNode
   | PreferenceNode
   | DeviceNode
-  | DocumentNode
+  | EventNode
   | HealthNode
   | HouseRuleNode;
 

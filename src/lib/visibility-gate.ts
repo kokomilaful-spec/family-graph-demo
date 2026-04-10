@@ -64,7 +64,7 @@ function isCaregiverOf(viewerId: string, ownerId: string, edges: Edge[]): boolea
 
 /** Check if a document node is a financial document */
 function isFinancialDoc(node: FamilyNode): boolean {
-  return node.type === "document" && "docType" in node && node.docType === "financial";
+  return node.type === "event" && "docType" in node && node.docType === "financial";
 }
 
 export function applyVisibilityGate(
@@ -117,9 +117,12 @@ export function applyVisibilityGate(
       // Guarded: owner + parents + grandparents of the owner
       if (ownerId && isParentOf(viewerId, ownerId, graph.edges)) return true;
       if (ownerId && isGrandparentOf(viewerId, ownerId, graph.edges)) return true;
-      // Safety override: high-risk guarded nodes are visible to children of the owner
-      // (e.g. Dad can see Grandma's risky 15% Gold Fund)
-      if (node.riskLevel === "high" && ownerId && isParentOf(ownerId, viewerId, graph.edges)) return true;
+      // Safety override: high-risk guarded nodes are visible to family members
+      // connected to the owner (children, grandchildren)
+      if (node.riskLevel === "high" && ownerId) {
+        if (isParentOf(ownerId, viewerId, graph.edges)) return true;
+        if (isGrandparentOf(ownerId, viewerId, graph.edges)) return true;
+      }
       return false;
     }
 

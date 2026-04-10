@@ -11,18 +11,18 @@ import PrivacyNode from "@/components/PrivacyNode";
 const data = mockData as FamilyGraphData;
 
 const TYPE_COLORS: Record<NodeType, string> = {
-  member: "#3b82f6",
-  preference: "#f59e0b",
-  device: "#8b5cf6",
-  document: "#10b981",
-  health: "#ef4444",
-  house_rule: "#06b6d4",
+  member: "#2d7e8a",
+  preference: "#e8b830",
+  device: "#bab3d5",
+  event: "#6ab8c5",
+  health: "#e05858",
+  house_rule: "#e88040",
 };
 
 const RISK_COLORS: Record<string, string> = {
-  low: "#22c55e",
-  medium: "#f59e0b",
-  high: "#ef4444",
+  low: "#6ab8c5",
+  medium: "#e88040",
+  high: "#c23a33",
 };
 
 const TYPE_ICONS: Record<NodeType, React.ReactNode> = {
@@ -41,9 +41,9 @@ const TYPE_ICONS: Record<NodeType, React.ReactNode> = {
       <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5h3m-6.75 2.25h10.5a2.25 2.25 0 002.25-2.25v-15a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v15a2.25 2.25 0 002.25 2.25z" />
     </svg>
   ),
-  document: (
+  event: (
     <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
     </svg>
   ),
   health: (
@@ -71,13 +71,13 @@ function getNodeMeta(node: FamilyNode): { key: string; value: string; color?: st
     meta.push({ key: "Visibility", value: node.visibility });
   }
   if (node.isAchievement) {
-    meta.push({ key: "Achievement", value: "Yes", color: "#eab308" });
+    meta.push({ key: "Achievement", value: "Yes", color: "#e8b830" });
   }
 
   if (node.type === "member") {
     meta.push({ key: "Role", value: node.role });
     if (node.age != null) meta.push({ key: "Age", value: String(node.age) });
-    if (node.healthTags?.length) meta.push({ key: "Health", value: node.healthTags.join(", "), color: "#ef4444" });
+    if (node.healthTags?.length) meta.push({ key: "Health", value: node.healthTags.join(", "), color: "#e05858" });
     if (node.adminLevel) meta.push({ key: "Admin Level", value: node.adminLevel });
   }
   if (node.type === "preference") {
@@ -88,8 +88,8 @@ function getNodeMeta(node: FamilyNode): { key: string; value: string; color?: st
     meta.push({ key: "Platform", value: node.platform });
     if (node.os) meta.push({ key: "OS", value: node.os });
   }
-  if (node.type === "document") {
-    meta.push({ key: "Doc Type", value: node.docType });
+  if (node.type === "event") {
+    meta.push({ key: "Event Type", value: node.docType });
   }
   if (node.type === "health") {
     meta.push({ key: "Condition", value: node.condition });
@@ -180,7 +180,7 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
       ]
     : getNodeMeta(node);
 
-  const displayLabel = isMasked ? "\u26a0 System Alert" : node.label;
+  const displayLabel = isMasked ? "\u26a0 Scam Risk" : node.label;
 
   return (
     <div className="flex h-full flex-col overflow-y-auto">
@@ -191,11 +191,11 @@ export default function NodeDetail({ nodeId, viewerId, onClose }: NodeDetailProp
             className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{
               backgroundColor: isHighRisk
-                ? "rgba(239,68,68,0.15)"
+                ? "rgba(194,58,51,0.15)"
                 : isAchievement
-                  ? "rgba(234,179,8,0.15)"
+                  ? "rgba(232,184,48,0.15)"
                   : `${color}20`,
-              color: isHighRisk ? "#ef4444" : isAchievement ? "#eab308" : color,
+              color: isHighRisk ? "#c23a33" : isAchievement ? "#e8b830" : color,
             }}
           >
             {isMasked ? (

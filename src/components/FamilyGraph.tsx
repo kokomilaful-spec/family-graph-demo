@@ -8,28 +8,28 @@ import { applyVisibilityGate } from "@/lib/visibility-gate";
 import mockData from "@/data/family-mock.json";
 
 const NODE_COLORS: Record<NodeType, string> = {
-  member: "#3b82f6",
-  preference: "#f59e0b",
-  device: "#8b5cf6",
-  document: "#10b981",
-  health: "#ef4444",
-  house_rule: "#eab308",
+  member: "#2d7e8a",
+  preference: "#e8b830",
+  device: "#bab3d5",
+  event: "#6ab8c5",
+  health: "#e05858",
+  house_rule: "#e88040",
 };
 
-const DIMMED_NODE = "#2a2a30";
-const DIMMED_LINK = "#1e1e24";
-const ACTIVE_LINK = "#4a9eff";
-const DEFAULT_LINK = "#333340";
-const GLOW_COLOR = "#22c55e";
-const RISK_HIGH_COLOR = "#ef4444";
-const RISK_MEDIUM_COLOR = "#f59e0b";
-const ACHIEVEMENT_COLOR = "#eab308";
+const DIMMED_NODE = "#1e3444";
+const DIMMED_LINK = "#162838";
+const ACTIVE_LINK = "#6ab8c5";
+const DEFAULT_LINK = "#2a4a5a";
+const GLOW_COLOR = "#6ab8c5";
+const RISK_HIGH_COLOR = "#c23a33";
+const RISK_MEDIUM_COLOR = "#e88040";
+const ACHIEVEMENT_COLOR = "#e8b830";
 
 const NODE_RADIUS: Record<NodeType, number> = {
   member: 8,
   preference: 6,
   device: 5,
-  document: 5,
+  event: 5,
   health: 5,
   house_rule: 6,
 };
@@ -81,7 +81,7 @@ function shapePath(
       ctx.closePath();
       break;
     }
-    case "document": {
+    case "event": {
       // Hexagon
       for (let i = 0; i < 6; i++) {
         const angle = (Math.PI / 3) * i - Math.PI / 2;
@@ -138,7 +138,7 @@ function getDepthLayer(node: {
 }): 0 | 1 | 2 {
   if (node.isAchievement) return 2;
   if (node.visibility === "private" || node.visibility === "guarded") return 2;
-  if (node.type === "document" && (node.visibility === "family" || !node.visibility))
+  if (node.type === "event" && (node.visibility === "family" || !node.visibility))
     return 0;
   return 1;
 }
@@ -444,7 +444,7 @@ export default function FamilyGraph({
           break;
         case "documents":
           for (const n of rawData.nodes) {
-            if (n.type === "document" && n.visibility !== "private") ids.add(n.id);
+            if (n.type === "event" && n.visibility !== "private") ids.add(n.id);
           }
           break;
         case "members":
@@ -703,9 +703,9 @@ export default function FamilyGraph({
 
         ctx.beginPath();
         ctx.arc(x, y, r + 1, 0, 2 * Math.PI);
-        ctx.strokeStyle = "#ef4444";
+        ctx.strokeStyle = "#c23a33";
         ctx.lineWidth = 1 + pulse * 0.4;
-        ctx.shadowColor = "#ef4444";
+        ctx.shadowColor = "#c23a33";
         ctx.shadowBlur = 6 + pulse * 3;
         ctx.stroke();
         ctx.shadowBlur = 0;
@@ -773,7 +773,7 @@ export default function FamilyGraph({
       let fillAlpha: number;
       if (isDimmed) {
         baseColor = DIMMED_NODE;
-        fillAlpha = 0.4;
+        fillAlpha = 0.2;
       } else if (isHighRisk) {
         baseColor = RISK_HIGH_COLOR;
         fillAlpha = 0.85;
@@ -828,6 +828,28 @@ export default function FamilyGraph({
         ctx.beginPath();
         ctx.arc(hlX, hlY, hlR, 0, 2 * Math.PI);
         ctx.fillStyle = hlGrad;
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // ── Person avatar silhouette for member nodes ──
+      if (node.type === "member" && !isDimmed) {
+        ctx.save();
+        shapePath(ctx, node.type, x, y, r);
+        ctx.clip();
+        // Head circle
+        const headR = r * 0.28;
+        const headY = y - r * 0.15;
+        ctx.beginPath();
+        ctx.arc(x, headY, headR, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(245,239,230,0.55)";
+        ctx.fill();
+        // Shoulders arc
+        const shoulderR = r * 0.52;
+        const shoulderY = y + r * 0.55;
+        ctx.beginPath();
+        ctx.arc(x, shoulderY, shoulderR, Math.PI, 0);
+        ctx.fillStyle = "rgba(245,239,230,0.40)";
         ctx.fill();
         ctx.restore();
       }
@@ -889,8 +911,13 @@ export default function FamilyGraph({
       }
 
       // ── Label ──
-      const fontSize = Math.max(12 / globalScale, 2);
-      ctx.font = `${fontSize}px sans-serif`;
+      const isMember = node.type === "member";
+      const fontSize = isMember
+        ? Math.max(14 / globalScale, 3)
+        : Math.max(11 / globalScale, 2);
+      ctx.font = isMember
+        ? `bold ${fontSize}px sans-serif`
+        : `${fontSize}px sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
 
@@ -899,7 +926,8 @@ export default function FamilyGraph({
         && !(highlightedIds !== null && highlightedIds.has(node.id));
 
       if (isDimmed) {
-        ctx.fillStyle = "#3f3f46";
+        ctx.globalAlpha = isMember ? 0.25 : 0.15;
+        ctx.fillStyle = "#3a3530";
       } else if (isHighRisk) {
         ctx.fillStyle = RISK_HIGH_COLOR;
       } else if (isAchievement) {
@@ -907,18 +935,20 @@ export default function FamilyGraph({
       } else if (isSelected) {
         ctx.fillStyle = GLOW_COLOR;
       } else if (isPrivate) {
-        ctx.fillStyle = "#71717a";
+        ctx.fillStyle = "#78706a";
+      } else if (isMember) {
+        ctx.fillStyle = "#f5efe6";
       } else {
-        ctx.fillStyle = "#d4d4d8";
+        ctx.fillStyle = "#c8c0b4";
       }
       if (isPrefFaded) ctx.globalAlpha = 0.6;
       const displayLabel = isMasked
-        ? "\u26a0 System Alert"
+        ? "\u26a0 Scam Risk"
         : isPrivate
           ? "\ud83d\udd12 Private"
           : node.label;
-      ctx.fillText(displayLabel, x, y + r + 3);
-      if (isPrefFaded) ctx.globalAlpha = 1;
+      ctx.fillText(displayLabel, x, y + r + (isMember ? 5 : 3));
+      if (isPrefFaded || isDimmed) ctx.globalAlpha = 1;
 
       // ── Health Status indicator (member nodes only) ──
       if (node.type === "member" && !isDimmed) {
@@ -931,7 +961,7 @@ export default function FamilyGraph({
 
         // If no risk or achievement, show a green "all clear" badge
         if (badges.length === 0) {
-          badges.push({ color: "#22c55e", glowColor: "#22c55e" });
+          badges.push({ color: "#6ab8c5", glowColor: "#6ab8c5" });
         }
 
         const badgeR = Math.max(2.5 / Math.sqrt(globalScale), 1.2);
@@ -1069,29 +1099,29 @@ export default function FamilyGraph({
       const depth = getDepthLayer(node);
       const isOwner = node.type === "member" || nodeOwnerMap[node.id] === settings.viewerId;
       const masked = node.riskLevel === "high" && !isOwner;
-      const label = masked ? "\u26a0 System Alert" : node.label;
+      const label = masked ? "\u26a0 Scam Risk" : node.label;
       const typeColor = NODE_COLORS[node.type];
 
       let badges = "";
       if (node.riskLevel === "high") {
-        badges += `<span style="color:#ef4444;font-size:10px">\u25cf High Risk</span>`;
+        badges += `<span style="color:#c23a33;font-size:10px">\u25cf High Risk</span>`;
       } else if (node.riskLevel === "medium") {
-        badges += `<span style="color:#f59e0b;font-size:10px">\u25cf Medium</span>`;
+        badges += `<span style="color:#e88040;font-size:10px">\u25cf Medium</span>`;
       }
       if (node.isAchievement) {
-        badges += `<span style="color:#eab308;font-size:10px">\u2605 Achievement</span>`;
+        badges += `<span style="color:#e8b830;font-size:10px">\u2605 Achievement</span>`;
       }
 
       return `<div style="
         display:flex;flex-direction:column;gap:4px;padding:10px 14px;min-width:120px;
       ">
-        <div style="font-size:13px;font-weight:600;color:#f4f4f5">${label}</div>
+        <div style="font-size:13px;font-weight:600;color:#f5efe6">${label}</div>
         <div style="display:flex;gap:8px;align-items:center">
           <span style="color:${typeColor};font-size:11px;text-transform:capitalize">${node.type}</span>
-          <span style="color:#52525b;font-size:10px">${LAYER_NAMES[depth]}</span>
+          <span style="color:#58524c;font-size:10px">${LAYER_NAMES[depth]}</span>
         </div>
         ${badges ? `<div style="display:flex;gap:6px;margin-top:2px">${badges}</div>` : ""}
-        ${masked ? `<div style="color:#71717a;font-size:10px;margin-top:2px">Click to request access</div>` : ""}
+        ${masked ? `<div style="color:#78706a;font-size:10px;margin-top:2px">Click to request access</div>` : ""}
       </div>`;
     },
     [nodeOwnerMap, settings.viewerId],
@@ -1105,13 +1135,13 @@ export default function FamilyGraph({
 
       if (highlightedEdges !== null) {
         const key = `${sourceId}__${targetId}`;
-        if (!highlightedEdges.has(key)) return DIMMED_LINK;
+        if (!highlightedEdges.has(key)) return "rgba(22,40,56,0.3)";
       }
 
       // Weight-based color for member-to-member links
       if (w >= 4 && sourceId.startsWith("m-") && targetId.startsWith("m-")) {
         // Bright warm glow for frequent interactions
-        return w >= 5 ? "#60a5fa" : "#3b82f6";
+        return w >= 5 ? "#6ab8c5" : "#2d7e8a";
       }
 
       if (highlightedEdges !== null) return ACTIVE_LINK;
@@ -1235,6 +1265,8 @@ export default function FamilyGraph({
     [onNodeSelect],
   );
 
+  const [legendOpen, setLegendOpen] = useState(true);
+
   const handleNodeDragEnd = useCallback((node: GraphNode) => {
     node.fx = node.x;
     node.fy = node.y;
@@ -1245,21 +1277,19 @@ export default function FamilyGraph({
       <div
         ref={containerRef}
         className="flex h-full w-full items-center justify-center text-zinc-500"
-        style={{ backgroundColor: "#0f0f14" }}
+        style={{ backgroundColor: "#152a38" }}
       >
         Loading graph…
       </div>
     );
   }
 
-  const [legendOpen, setLegendOpen] = useState(true);
-
   return (
-    <div ref={containerRef} className="relative h-full w-full" style={{ backgroundColor: "#0f0f14" }}>
+    <div ref={containerRef} className="relative h-full w-full" style={{ backgroundColor: "#152a38" }}>
       {/* Floating graph legend */}
       <div className="absolute bottom-4 left-4 z-10">
         {legendOpen ? (
-          <div className="rounded-lg border border-white/[0.06] bg-[rgba(15,15,22,0.85)] px-3 py-2 backdrop-blur-lg">
+          <div className="rounded-lg border border-white/[0.06] bg-[rgba(20,40,55,0.85)] px-3 py-2 backdrop-blur-lg">
             <button
               onClick={() => setLegendOpen(false)}
               className="mb-1.5 flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500"
@@ -1286,7 +1316,7 @@ export default function FamilyGraph({
         ) : (
           <button
             onClick={() => setLegendOpen(true)}
-            className="rounded-lg border border-white/[0.06] bg-[rgba(15,15,22,0.85)] px-2.5 py-1.5 text-xs text-zinc-500 backdrop-blur-lg transition-colors hover:text-zinc-300"
+            className="rounded-lg border border-white/[0.06] bg-[rgba(20,40,55,0.85)] px-2.5 py-1.5 text-xs text-zinc-500 backdrop-blur-lg transition-colors hover:text-zinc-300"
           >
             Legend
           </button>
@@ -1336,7 +1366,7 @@ export default function FamilyGraph({
         cooldownTicks={100}
         d3AlphaDecay={0.02}
         d3VelocityDecay={0.3}
-        backgroundColor="#0f0f14"
+        backgroundColor="#152a38"
       />
     </div>
   );

@@ -84,7 +84,7 @@ function computeTrustMetrics(
   );
   const elderIds = new Set(elders.map((n) => n.id));
   const financialRiskNodes = nodes.filter(
-    (n) => n.type === "document" && n.riskLevel === "high" && "docType" in n && n.docType === "financial",
+    (n) => n.type === "event" && n.riskLevel === "high" && "docType" in n && n.docType === "financial",
   );
   for (const frn of financialRiskNodes) {
     const connectedToElder = edges.some(

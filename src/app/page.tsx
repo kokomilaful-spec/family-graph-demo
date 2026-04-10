@@ -35,7 +35,7 @@ export default function Home() {
   const synapseEvents = ((mockData as FamilyGraphData).synapseEvents ?? []) as SynapseEvent[];
   const { celebratingMembers, activeRewards, triggerCelebration, dismissReward } = useCelebration(synapseEvents);
 
-  // High-risk event detection: auto-trigger coaching for Dad
+  // High-risk event detection: detect suspicious app installs on children's devices
   const highRiskAlert = useMemo(
     () =>
       handle_high_risk_event(
@@ -198,65 +198,39 @@ export default function Home() {
     return result.length > 0 ? result : null;
   }, [activeCommand]);
 
-  // Auto-trigger chat for Dad when handle_high_risk_event detects an app install
-  useEffect(() => {
-    if (!highRiskAlert) return;
-    // Switch viewer to the notified parent (Dad)
-    if (settings.viewerId !== highRiskAlert.parentId) {
-      setSettings((prev) => ({ ...prev, viewerId: highRiskAlert.parentId }));
-    }
-    // Open coach mode targeting the suspicious node
-    if (highRiskAlert.targetNodeId) {
-      setCoachNodeId(highRiskAlert.targetNodeId);
-      setSelectedNodeId(highRiskAlert.targetNodeId);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only on mount
-
-  // Auto-trigger mediator chat for Dad when livo_mediator detects elder financial risk.
-  // If highRiskAlert took priority on mount, surface mediator when coach chat is closed.
+  // Auto-trigger mediator chat on mount (Grandma scam → coaching for Son).
+  // Mediator takes priority since the default viewer is Son.
   useEffect(() => {
     if (!mediatorAlert) return;
-    if (!highRiskAlert) {
-      // No competing alert — open immediately on mount
-      if (settings.viewerId !== mediatorAlert.parentId) {
-        setSettings((prev) => ({ ...prev, viewerId: mediatorAlert.parentId }));
-      }
-      if (mediatorAlert.targetNodeId) {
-        setCoachNodeId(mediatorAlert.targetNodeId);
-        setSelectedNodeId(mediatorAlert.targetNodeId);
-        setMediatorShown(true);
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only on mount
-
-  // When the coach chat is closed and mediatorAlert exists, surface it (once)
-  useEffect(() => {
-    if (!mediatorAlert || !highRiskAlert || mediatorShown) return;
-    // coachNodeId was cleared → user closed the highRisk coach chat
-    if (coachNodeId === null && mediatorAlert.targetNodeId) {
+    if (mediatorAlert.targetNodeId) {
       setCoachNodeId(mediatorAlert.targetNodeId);
       setSelectedNodeId(mediatorAlert.targetNodeId);
       setMediatorShown(true);
     }
-  }, [coachNodeId, mediatorAlert, highRiskAlert, mediatorShown]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only on mount
 
-  // Open ChatCoach when a high-risk node is selected by a parent viewer
+  // When the mediator chat is closed, surface the highRiskAlert if it exists (once)
+  useEffect(() => {
+    if (!highRiskAlert || !mediatorAlert || !mediatorShown) return;
+    // coachNodeId was cleared → user closed the mediator coach chat
+    if (coachNodeId === null && highRiskAlert.targetNodeId) {
+      setCoachNodeId(highRiskAlert.targetNodeId);
+      setSelectedNodeId(highRiskAlert.targetNodeId);
+    }
+  }, [coachNodeId, highRiskAlert, mediatorAlert, mediatorShown]);
+
+  // Open ChatCoach when a high-risk node is selected
   useEffect(() => {
     if (!selectedNodeId) return;
     const node = mockData.nodes.find((n) => n.id === selectedNodeId);
     if (!node || node.riskLevel !== "high") return;
 
-    // Only show for parent viewers
-    const viewer = mockData.nodes.find((n) => n.id === settings.viewerId);
-    if (!viewer || !("role" in viewer) || viewer.role !== "parent") return;
-
     setCoachNodeId(selectedNodeId);
   }, [selectedNodeId, settings.viewerId]);
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#0a0a10]">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-[#1a3040]">
       {/* Main area: left sidebar + graph + right panel */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left — Graph Settings (glassmorphism panel) */}

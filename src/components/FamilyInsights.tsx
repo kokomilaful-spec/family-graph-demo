@@ -8,7 +8,7 @@ import type {
   PreferenceNode,
   HealthNode,
   DeviceNode,
-  DocumentNode,
+  EventNode,
   Edge,
   SynapseEvent,
 } from "@/types/family";
@@ -309,12 +309,19 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
         (f) => (f.pref as { sentiment?: string }).sentiment === "loves",
       );
       if (avoids && loves) {
+        // Find the most recent positive event involving either member
+        const mealEvent = events.find(
+          (ev) =>
+            ev.impact === "Positive" &&
+            (ev.involvedMembers.includes(avoids.member.id) || ev.involvedMembers.includes(loves.member.id)),
+        );
         result.push({
           id: "food-combo",
           icon: "\ud83c\udf72",
           category: "suggestion",
           message: `${avoids.member.label} avoids ${avoids.pref.label.toLowerCase()} and ${loves.member.label} loves ${loves.pref.label.toLowerCase()} \u2014 plan a meal everyone enjoys?`,
           actionLabel: "Plan Meal",
+          timestamp: mealEvent?.timestamp ?? new Date().toISOString(),
           onAction: () =>
             alert(
               `Opening meal planner with dietary notes: ${avoids.member.label} (no ${avoids.pref.label.toLowerCase()}), ${loves.member.label} (loves ${loves.pref.label.toLowerCase()})...`,
@@ -370,12 +377,17 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
       const member = data.nodes.find((n) => n.id === memberId);
       const doc = data.nodes.find((n) => n.id === docId);
       if (member && doc && doc.visibility !== "private") {
+        // Find the most recent event involving this member for timestamp
+        const memberEvent = events.find(
+          (ev) => ev.involvedMembers.includes(memberId),
+        );
         result.push({
           id: `doc-${doc.id}`,
           icon: "\ud83d\udccb",
           category: "reminder",
           message: `${member.label} manages the ${doc.label}. Should ${viewerLabel} help out tonight?`,
           actionLabel: "Offer Help",
+          timestamp: memberEvent?.timestamp ?? new Date().toISOString(),
           onAction: () =>
             alert(
               `Sending "${viewerLabel} wants to help with ${doc.label}" to ${member.label}...`,
@@ -400,6 +412,11 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
           (p) => (p as { category?: string }).category === "activity",
         );
         const activity = aPrefs[0];
+        // Find most recent event involving either member for timestamp
+        const bondEvent = events.find(
+          (ev) =>
+            ev.involvedMembers.includes(memberA.id) || ev.involvedMembers.includes(memberB.id),
+        );
         result.push({
           id: `bond-${bond.id}`,
           icon: "\ud83d\udc9e",
@@ -408,6 +425,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
             ? `${memberA.label} & ${memberB.label} interact frequently \u2014 plan a ${activity.label.toLowerCase()} outing?`
             : `${memberA.label} & ${memberB.label} have a strong bond. Schedule family time together?`,
           actionLabel: activity ? `Plan ${activity.label}` : "Schedule Time",
+          timestamp: bondEvent?.timestamp ?? new Date().toISOString(),
           onAction: () =>
             alert(
               `Creating family event for ${memberA.label} & ${memberB.label}...`,
@@ -581,7 +599,7 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
         }
 
         case "documents": {
-          const docNodes = data.nodes.filter((n) => n.type === "document") as DocumentNode[];
+          const docNodes = data.nodes.filter((n) => n.type === "event") as EventNode[];
           const items: ContextItem[] = docNodes
             .filter((d) => d.visibility !== "private")
             .map((d) => {
@@ -606,8 +624,8 @@ export default function FamilyInsights({ viewerId, activeCommand, onClearCommand
           if (items.length > 0) {
             sections.push({
               type: "documents",
-              title: "Documents",
-              icon: "\ud83d\udcc1",
+              title: "Events",
+              icon: "\ud83d\udcc5",
               items,
             });
           }

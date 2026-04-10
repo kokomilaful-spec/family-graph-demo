@@ -96,7 +96,7 @@ export default function ChatCoach({ nodeId, onClose }: ChatCoachProps) {
   return (
     <div className="fixed bottom-6 right-6 z-50 w-96 animate-[slideUp_0.3s_ease-out] rounded-2xl border border-white/[0.08] shadow-2xl shadow-black/50"
       style={{
-        background: "rgba(15, 15, 22, 0.75)",
+        background: "rgba(20, 40, 55, 0.75)",
         backdropFilter: "blur(24px) saturate(1.4)",
         WebkitBackdropFilter: "blur(24px) saturate(1.4)",
       }}
